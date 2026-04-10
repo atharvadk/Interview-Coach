@@ -5,10 +5,7 @@ import os
 
 load_dotenv()
 
-app = FastAPI(
-    title="AI Interview Coach API",
-    version="1.0.0"
-)
+app = FastAPI(title="AI Interview Coach API", version="1.0.0")
 
 origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000").split(",")
 
@@ -19,6 +16,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ── Routes ────────────────────────────────────────────────────────────────────
+from app.routes import questions
+app.include_router(questions.router, prefix="/questions", tags=["Questions"])
 
 @app.get("/")
 def root():
