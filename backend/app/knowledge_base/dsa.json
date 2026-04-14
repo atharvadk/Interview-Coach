@@ -1,0 +1,222 @@
+[
+  {
+    "ID": "dsa_001",
+    "Topic": "Arrays",
+    "Difficulty": "Easy",
+    "Type": "Conceptual",
+    "Question": "What is an array? Explain time complexity for access, insertion, and deletion.",
+    "Expert_Answer": "An array is a contiguous block of memory storing elements of the same type, accessed via index. [1] Time complexity: Access O(1), Search O(n) unsorted / O(log n) sorted, Insertion at end O(1) amortized / at position O(n), Deletion at position O(n). [1] Space O(n). [1] Arrays are cache-friendly due to contiguous memory. [1]",
+    "Keywords": "array, contiguous memory, index, row-major, O(1) access, insertion, deletion",
+    "Misconceptions": "Array insertion is always O(1) | Multi-dimensional arrays stored non-contiguously",
+    "Follow_up": "What is the difference between a static and dynamic array?"
+  },
+  {
+    "ID": "dsa_002",
+    "Topic": "Sorting",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Compare Merge Sort and Quick Sort in terms of time complexity, space complexity, and stability.",
+    "Expert_Answer": "Merge Sort: Time O(n log n) best/average/worst, Space O(n) auxiliary, stable. [2] Divides array in half, sorts each, merges. [2] Preferred for linked lists and external sorting. [2] Quick Sort: Time O(n log n) average, O(n²) worst (bad pivot), Space O(log n) stack, not stable by default. [2] Uses partition with pivot. [2] In-place. [2] Quick Sort is generally faster in practice due to better cache performance. [2]",
+    "Keywords": "merge sort, quick sort, O(n log n), stable, pivot, partition, divide and conquer",
+    "Misconceptions": "Merge sort is always faster than quick sort | Quick sort is always O(n log n)",
+    "Follow_up": "When would you prefer merge sort over quick sort?"
+  },
+  {
+    "ID": "dsa_003",
+    "Topic": "Sorting",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Explain Heap Sort and its relationship to the binary heap data structure.",
+    "Expert_Answer": "Heap Sort uses a max-heap. [3] Steps: (1) Build max-heap from array – O(n), (2) Repeatedly extract max (swap root with last, reduce heap size, heapify) – n-1 times at O(log n) each. [3] Total O(n log n). [3] In-place, not stable. [3] Binary heap: complete binary tree stored as array. [3] For node i: left child 2i+1, right 2i+2, parent (i-1)/2. [3] Heapify: O(log n). [3] Build heap: O(n) bottom-up. [3]",
+    "Keywords": "heap sort, binary heap, max-heap, heapify, O(n log n), in-place, complete binary tree",
+    "Misconceptions": "Heap sort is stable | Building heap is O(n log n)",
+    "Follow_up": "How does bubble sort differ from heap sort in time complexity?"
+  },
+  {
+    "ID": "dsa_004",
+    "Topic": "Sorting",
+    "Difficulty": "Easy",
+    "Type": "Conceptual",
+    "Question": "Explain Insertion Sort and Bubble Sort. For what type of data is Insertion Sort most efficient?",
+    "Expert_Answer": "Insertion Sort: builds sorted portion by inserting each element in correct position. [4] Time O(n²) worst/average, O(n) best (already sorted). [4] Space O(1). [4] Stable. [4] Efficient for small arrays and nearly-sorted data. [4] Bubble Sort: repeatedly swaps adjacent out-of-order elements. [4] Time O(n²) worst, O(n) best with optimization. [4] Space O(1). [4] Stable. [4] Insertion sort preferred over bubble sort – fewer comparisons and swaps on average. [4]",
+    "Keywords": "insertion sort, bubble sort, O(n²), stable, in-place, nearly sorted, online",
+    "Misconceptions": "Bubble sort is faster than insertion sort | Insertion sort is O(n) always",
+    "Follow_up": "What is Selection Sort and how does it compare to Insertion Sort?"
+  },
+  {
+    "ID": "dsa_005",
+    "Topic": "Searching",
+    "Difficulty": "Easy",
+    "Type": "Conceptual",
+    "Question": "Compare Linear Search and Binary Search. When can Binary Search be applied?",
+    "Expert_Answer": "Linear Search: checks each element sequentially. [5] Time O(n). [5] Works on any array. [5] Binary Search: requires sorted array. [5] Compares target with middle, eliminates half. [5] Time O(log n), Space O(1) iterative. [5] Can only be applied to sorted data with random access (arrays, not linked lists). [5] BST provides O(log n) average for dynamic data. [5]",
+    "Keywords": "linear search, binary search, sorted, O(log n), O(n), random access, BST",
+    "Misconceptions": "Binary search works on unsorted arrays | Linear search is always inefficient",
+    "Follow_up": "How would you implement binary search recursively?"
+  },
+  {
+    "ID": "dsa_006",
+    "Topic": "Stacks",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Explain the Stack data structure and its application in expression evaluation and conversion.",
+    "Expert_Answer": "Stack is LIFO (Last In First Out). [6] Operations: push, pop, peek – all O(1). [6] Applications: (1) Expression conversion – Infix to Postfix/Prefix using operator precedence, (2) Expression evaluation – evaluate postfix using operand stack, (3) Recursion (call stack), (4) Backtracking, (5) Undo operations, (6) Parenthesis matching. [6] Infix-to-Postfix: scan left to right, operands to output, operators to stack based on precedence. [6]",
+    "Keywords": "stack, LIFO, push, pop, infix, postfix, prefix, expression evaluation, recursion",
+    "Misconceptions": "Stack is always implemented with arrays | Expression evaluation handles all cases using stack alone",
+    "Follow_up": "Evaluate the postfix expression: 3 4 + 2 × using a stack."
+  },
+  {
+    "ID": "dsa_007",
+    "Topic": "Queues",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Explain Simple Queue, Circular Queue, Deque, and Priority Queue.",
+    "Expert_Answer": "Simple Queue: FIFO, enqueue at rear, dequeue from front. [7] Array implementation wastes space when front advances. [7] Circular Queue: front and rear wrap using modulo, solves wasted space. [7] Deque (Double Ended Queue): insert/delete from both ends. [7] Priority Queue: served by priority, not order. [7] Implemented with heap O(log n) insert/delete. [7] Applications: Queue – BFS, job scheduling; Priority Queue – Dijkstra, A*, process scheduling. [7]",
+    "Keywords": "queue, FIFO, circular queue, deque, priority queue, enqueue, dequeue, heap",
+    "Misconceptions": "Simple queue never has wasted space | Priority queue is always sorted",
+    "Follow_up": "How does a priority queue differ from a sorted list in terms of performance?"
+  },
+  {
+    "ID": "dsa_008",
+    "Topic": "Linked Lists",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Compare Singly, Doubly, and Circular Linked Lists. What are the trade-offs versus arrays?",
+    "Expert_Answer": "Singly LL: data + next pointer. [8] Doubly LL: data + next + prev – backward traversal, O(1) deletion given node pointer. [8] Circular LL: last node points to first. [8] Vs Arrays: LL advantages – dynamic size, O(1) insert/delete at known position. [8] LL disadvantages – O(n) access (no random access), extra memory for pointers, poor cache performance. [8]",
+    "Keywords": "singly linked list, doubly linked list, circular linked list, pointer, dynamic, cache, random access",
+    "Misconceptions": "Linked list insertion is always O(1) | Arrays are always slower than linked lists",
+    "Follow_up": "How would you detect a cycle in a linked list? (Floyd's algorithm)"
+  },
+  {
+    "ID": "dsa_009",
+    "Topic": "Trees",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Explain binary tree traversals: Inorder, Preorder, Postorder, and Level Order. What is each used for?",
+    "Expert_Answer": "Inorder (Left-Root-Right): gives sorted sequence for BST. [9] Preorder (Root-Left-Right): creates tree copy, prefix expression. [9] Postorder (Left-Right-Root): deletes tree, postfix expression. [9] Level Order (BFS): uses queue, processes level by level – for shortest path, serialization. [9] All traversals O(n). [9] Recursive uses call stack implicitly. [9] Morris traversal achieves O(1) space. [9]",
+    "Keywords": "inorder, preorder, postorder, level order, BST, traversal, recursion, BFS",
+    "Misconceptions": "Inorder always gives sorted output for any binary tree | Level order always requires O(n) extra space",
+    "Follow_up": "Write the inorder traversal of a BST with elements 5, 3, 7, 1, 4."
+  },
+  {
+    "ID": "dsa_010",
+    "Topic": "Trees",
+    "Difficulty": "Hard",
+    "Type": "Conceptual",
+    "Question": "What is an AVL tree? Explain the four rotation cases for balancing.",
+    "Expert_Answer": "AVL tree is a self-balancing BST where Balance Factor (height(left) – height(right)) of any node is at most 1. [10] Four rotation cases: (1) LL – right rotation at unbalanced node, (2) RR – left rotation, (3) LR – left rotation on child then right rotation on node, (4) RL – right rotation on child then left rotation on node. [10] All operations O(log n) guaranteed. [10]",
+    "Keywords": "AVL tree, balance factor, rotation, LL, RR, LR, RL, self-balancing, O(log n)",
+    "Misconceptions": "AVL trees are the same as Red-Black trees | Rotations change the BST property",
+    "Follow_up": "Compare AVL trees and Red-Black trees in terms of rotation frequency and use cases."
+  },
+  {
+    "ID": "dsa_011",
+    "Topic": "Trees",
+    "Difficulty": "Hard",
+    "Type": "Conceptual",
+    "Question": "Explain B-Trees and B+ Trees. Why are they used in databases?",
+    "Expert_Answer": "B-Tree: self-balancing multi-way search tree. [11] Order m: each node at most m children. [11] All leaves at same level. [11] Keys in both internal and leaf nodes. [11] B+ Tree: all data only in leaf nodes; internal nodes store only routing keys; leaf nodes linked in sorted order for efficient range queries. [11] Used in databases: height O(log_m n) means few disk I/Os, large m fills one disk block, leaf linking enables range scans. [11]",
+    "Keywords": "B-tree, B+ tree, order, self-balancing, database, disk I/O, range queries, leaf nodes",
+    "Misconceptions": "B-tree and B+ tree are identical | B-trees are only for databases",
+    "Follow_up": "Why is B+ tree preferred over B-tree in file system indexing?"
+  },
+  {
+    "ID": "dsa_012",
+    "Topic": "Graphs",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Compare BFS and DFS for graph traversal. How does BFS find shortest paths?",
+    "Expert_Answer": "BFS uses queue, visits all neighbors before going deeper. [12] DFS uses stack, explores as deep as possible. [12] BFS: Complete, finds shortest path in unweighted graphs, O(V+E), Space O(V). [12] DFS: O(V+E), Space O(V). [12] BFS finds shortest path because it explores level by level – the first time a node is visited, it is via the shortest path. [12] BFS for bipartite check; DFS for cycle detection, topological sort, SCC. [12]",
+    "Keywords": "BFS, DFS, shortest path, queue, stack, O(V+E), unweighted, topological sort",
+    "Misconceptions": "DFS finds shortest paths | BFS always uses more memory than DFS",
+    "Follow_up": "How do you detect a cycle in a directed graph using DFS?"
+  },
+  {
+    "ID": "dsa_013",
+    "Topic": "Graphs",
+    "Difficulty": "Hard",
+    "Type": "Conceptual",
+    "Question": "Explain Prim's and Kruskal's algorithms for MST. Compare their complexities.",
+    "Expert_Answer": "Prim's: starts with arbitrary vertex, greedily adds minimum weight edge connecting visited and unvisited vertices. [13] Time O(E log V) with min-heap, O(V²) with simple array. [13] Suitable for dense graphs. [13] Kruskal's: sorts all edges by weight, adds edge if it does not create a cycle (Union-Find). [13] Time O(E log E). [13] Suitable for sparse graphs. [13] Both greedy, both produce optimal MST. [13]",
+    "Keywords": "Prim's, Kruskal's, MST, greedy, Union-Find, O(E log V), spanning tree",
+    "Misconceptions": "Prim's is always faster than Kruskal's | MST is unique for all graphs",
+    "Follow_up": "What data structure is critical for Kruskal's algorithm and why?"
+  },
+  {
+    "ID": "dsa_014",
+    "Topic": "Graphs",
+    "Difficulty": "Hard",
+    "Type": "Conceptual",
+    "Question": "Explain Dijkstra's algorithm for shortest path. What is its limitation?",
+    "Expert_Answer": "Dijkstra's finds single-source shortest paths for non-negative edge weights. [14] Maintains dist[] initialized to infinity and a min-heap priority queue. [14] Extracts minimum distance vertex, relaxes adjacent edges: if dist[u]+weight(u,v) < dist[v], update. [14] Complexity O((V+E) log V) with binary heap. [14] Limitation: does not work with negative edge weights – use Bellman-Ford O(VE) for negative weights. [14]",
+    "Keywords": "Dijkstra, shortest path, priority queue, relaxation, non-negative, O((V+E)logV)",
+    "Misconceptions": "Dijkstra works with negative weights | Dijkstra finds all-pairs shortest paths",
+    "Follow_up": "How does Bellman-Ford differ from Dijkstra's algorithm?"
+  },
+  {
+    "ID": "dsa_015",
+    "Topic": "Hashing",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Explain hashing, hash functions, and collision resolution techniques.",
+    "Expert_Answer": "Hashing maps keys to array indices via hash function. [15] Good hash: uniform distribution, deterministic, fast. [15] Collision: two keys map to same index. [15] Resolution: (1) Chaining – linked list at each index, average O(1+α) where α=load factor, (2) Open Addressing – Linear probing (clustering problem), Quadratic probing, Double hashing. [15] When load factor grows large, resize (rehash). [15] Cuckoo hashing achieves O(1) worst-case lookup. [15]",
+    "Keywords": "hashing, hash function, collision, chaining, open addressing, linear probing, load factor, cuckoo hashing",
+    "Misconceptions": "Hashing is O(1) in all cases | Open addressing always better than chaining",
+    "Follow_up": "What is the ideal load factor for open addressing hash tables?"
+  },
+  {
+    "ID": "dsa_016",
+    "Topic": "Complexity Analysis",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Explain Big-O, Big-Omega, and Theta notations with examples.",
+    "Expert_Answer": "Big-O (O): upper bound – algorithm runs in at most f(n) steps. [16] Example: Linear search O(n). [16] Big-Omega (Ω): lower bound – takes at least f(n) steps. [16] Example: Comparison-based sorting Ω(n log n). [16] Theta (Θ): tight bound – both upper and lower. [16] Example: Merge sort Θ(n log n). [16] Hierarchy: O(1) < O(log n) < O(n) < O(n log n) < O(n²) < O(2^n) < O(n!). [16]",
+    "Keywords": "Big-O, Big-Omega, Theta, asymptotic, upper bound, lower bound, tight bound",
+    "Misconceptions": "O(n) is always worse than O(log n) | Big-O is the same as worst case",
+    "Follow_up": "What is the time complexity of the Tower of Hanoi problem?"
+  },
+  {
+    "ID": "dsa_017",
+    "Topic": "Complexity Analysis",
+    "Difficulty": "Hard",
+    "Type": "Conceptual",
+    "Question": "What are complexity classes P and NP? Explain NP-completeness.",
+    "Expert_Answer": "P: solvable in polynomial time O(n^k). [17] NP: solutions verifiable in polynomial time. [17] P ⊆ NP but P=NP is unsolved. [17] NP-complete: NP-hard AND in NP. [17] Cook-Levin theorem: SAT is NP-complete. [17] Other NP-complete problems: 3-SAT, Graph Coloring, Knapsack, TSP decision version. [17] To show NP-completeness: show problem is in NP AND reduce a known NP-complete problem to it in polynomial time. [17]",
+    "Keywords": "P, NP, NP-complete, NP-hard, polynomial time, SAT, reduction, Cook-Levin",
+    "Misconceptions": "NP means non-polynomial | All NP problems are unsolvable",
+    "Follow_up": "Is the Travelling Salesman Problem NP-complete?"
+  },
+  {
+    "ID": "dsa_018",
+    "Topic": "Dynamic Programming",
+    "Difficulty": "Hard",
+    "Type": "Conceptual",
+    "Question": "Explain Dynamic Programming. What are the two key properties required?",
+    "Expert_Answer": "Dynamic Programming solves problems by breaking them into overlapping subproblems and storing results to avoid recomputation. [18] Two required properties: (1) Optimal Substructure – optimal solution contains optimal subproblem solutions, (2) Overlapping Subproblems – same subproblems solved multiple times. [18] Approaches: Top-down (memoization); Bottom-up (tabulation). [18] Examples: Fibonacci, 0-1 Knapsack, LCS, Floyd-Warshall, Matrix Chain Multiplication. [18]",
+    "Keywords": "dynamic programming, optimal substructure, overlapping subproblems, memoization, tabulation, Knapsack, LCS",
+    "Misconceptions": "DP and Greedy always give same results | DP solves all optimization problems",
+    "Follow_up": "What is the difference between divide-and-conquer and dynamic programming?"
+  },
+  {
+    "ID": "dsa_019",
+    "Topic": "Trees",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "What is a BST? Explain insertion, deletion, and search operations.",
+    "Expert_Answer": "BST: binary tree where left subtree ≤ root ≤ right subtree. [19] Search: compare with root, go left if smaller, right if larger. [19] O(log n) average, O(n) worst (skewed). [19] Insertion: find correct leaf position via BST search, insert. [19] Deletion: (1) Leaf – remove, (2) One child – replace with child, (3) Two children – replace with inorder successor (smallest in right subtree). [19] Self-balancing BSTs (AVL, RB) maintain O(log n) always. [19]",
+    "Keywords": "BST, binary search tree, insertion, deletion, inorder successor, O(log n), height",
+    "Misconceptions": "BST insertion is always O(log n) | BST always stays balanced",
+    "Follow_up": "How would you check if a binary tree is a valid BST?"
+  },
+  {
+    "ID": "dsa_020",
+    "Topic": "Greedy Algorithms",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Explain the Greedy approach. Give examples where Greedy gives optimal solution and one where it does not.",
+    "Expert_Answer": "Greedy makes locally optimal choice at each step, hoping for global optimum. [20] Works when problem has greedy choice property and optimal substructure. [20] Correct greedy: (1) Fractional Knapsack – sort by value/weight ratio, (2) Activity Selection – sort by finish time, (3) Huffman Coding. [20] Incorrect: 0-1 Knapsack (items cannot be fractioned, requires DP), Coin change for arbitrary denominations. [20]",
+    "Keywords": "greedy, locally optimal, greedy choice property, Fractional Knapsack, Activity Selection, Huffman, 0-1 Knapsack",
+    "Misconceptions": "Greedy always finds optimal solution | Greedy and DP always give same result",
+    "Follow_up": "Why does greedy fail for 0-1 Knapsack but works for Fractional Knapsack?"
+  }
+]

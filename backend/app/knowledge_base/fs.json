@@ -1,0 +1,222 @@
+[
+  {
+    "ID": "fs_001",
+    "Topic": "HTML & CSS",
+    "Difficulty": "Easy",
+    "Type": "Conceptual",
+    "Question": "What is the difference between HTML and HTML5? List important new features of HTML5.",
+    "Expert_Answer": "HTML5 new features: (1) Semantic elements – header, footer, nav, section, article, main (improve structure and SEO), (2) Multimedia – audio, video tags without plugins, (3) Canvas API for 2D/3D graphics, (4) Form enhancements – new input types (email, date, range), placeholder, required, (5) localStorage and sessionStorage, (6) Geolocation API, (7) Web Workers for background scripts, (8) WebSocket for real-time communication [1]. DOCTYPE simplified to <!DOCTYPE html> [1].",
+    "Keywords": "HTML5, semantic elements, canvas, localStorage, WebSocket, doctype, audio, video",
+    "Misconceptions": "HTML5 replaced CSS | All browsers fully support all HTML5 features",
+    "Follow_up": "What is the difference between localStorage and sessionStorage?"
+  },
+  {
+    "ID": "fs_002",
+    "Topic": "HTML & CSS",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Explain the CSS Box Model. What is the difference between content-box and border-box sizing?",
+    "Expert_Answer": "CSS Box Model: every element is a rectangular box with Content + Padding + Border + Margin [2]. content-box (default): width/height applies to content only [2]. Total width = width + padding×2 + border×2 [2]. border-box: width/height includes content + padding + border [2]. Makes sizing more intuitive and predictable [2]. Applied with *, *::before, *::after { box-sizing: border-box } [2]. Display types: block (full width), inline, inline-block, flex, grid [2].",
+    "Keywords": "box model, content, padding, border, margin, content-box, border-box, box-sizing",
+    "Misconceptions": "Margin is part of element size | border-box changes how margin works",
+    "Follow_up": "Explain the difference between margin collapse and padding."
+  },
+  {
+    "ID": "fs_003",
+    "Topic": "HTML & CSS",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "What is Bootstrap? Explain its grid system.",
+    "Expert_Answer": "Bootstrap is a CSS framework providing pre-built responsive components and utilities [3]. Grid System: 12-column responsive grid using flexbox [3]. Container: .container (fixed-width), .container-fluid (full-width) [3]. Columns: .col-{breakpoint}-{n} [3]. Breakpoints: xs (<576px), sm (≥576), md (≥768), lg (≥992), xl (≥1200), xxl (≥1400) [3]. Example: .col-md-6 = 6 columns on medium+ screens [3]. Mobile-first approach [3]. Bootstrap 5 removed jQuery dependency [3].",
+    "Keywords": "Bootstrap, grid system, responsive, 12-column, breakpoints, flexbox, container, mobile-first",
+    "Misconceptions": "Bootstrap requires jQuery in all versions | All 12 grid columns must always be used",
+    "Follow_up": "How do you create a responsive navigation bar using Bootstrap?"
+  },
+  {
+    "ID": "fs_004",
+    "Topic": "JavaScript",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Explain JavaScript data types, var vs let vs const, and scope.",
+    "Expert_Answer": "Primitive types: Number, String, Boolean, undefined, null, Symbol, BigInt [4]. Reference: Object, Array, Function [4]. var: function-scoped, hoisted (declared at top with undefined), can be redeclared [4]. let: block-scoped, not hoisted (temporal dead zone), cannot be redeclared [4]. const: block-scoped, must be initialized, cannot be reassigned (but object properties can change) [4]. Hoisting: var declarations hoisted, not initializations [4]. Strict mode prevents undeclared variables [4].",
+    "Keywords": "var, let, const, scope, hoisting, block scope, function scope, strict mode, data types",
+    "Misconceptions": "const makes objects fully immutable | var and let behave the same way",
+    "Follow_up": "What is the Temporal Dead Zone (TDZ) in JavaScript?"
+  },
+  {
+    "ID": "fs_005",
+    "Topic": "JavaScript",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Explain the DOM (Document Object Model). How does JavaScript manipulate HTML elements?",
+    "Expert_Answer": "DOM is a programming interface representing HTML as a tree of nodes [5]. Selection: getElementById(), querySelector(), querySelectorAll() [5]. Modification: element.innerHTML, textContent, setAttribute(), style.property, classList.add/remove/toggle() [5]. Creation: createElement(), appendChild(), insertBefore(), removeChild() [5]. Event handling: addEventListener('click', handler), removeEventListener() [5]. Virtual DOM (React) optimizes real DOM operations by batching updates [5].",
+    "Keywords": "DOM, document, querySelector, innerHTML, addEventListener, createElement, appendChild, node",
+    "Misconceptions": "innerHTML is always faster than appendChild | Event listeners are automatically removed when element is removed",
+    "Follow_up": "What is event bubbling and capturing? What is event delegation?"
+  },
+  {
+    "ID": "fs_006",
+    "Topic": "JavaScript",
+    "Difficulty": "Hard",
+    "Type": "Conceptual",
+    "Question": "Explain JavaScript closures with an example. What problem do they solve?",
+    "Expert_Answer": "A closure is a function that retains access to its lexical scope even when called outside that scope [6]. Example: function counter() { let count=0; return function() { return ++count; } } [6]. Each call to counter() creates a new closure with its own count [6]. Problems solved: (1) Data privacy/encapsulation (private variables), (2) Factory functions, (3) Callbacks maintaining state, (4) Module pattern [6]. Common pitfall: closures in loops with var (all share same variable – use let or IIFE to fix) [6].",
+    "Keywords": "closure, lexical scope, inner function, outer function, data privacy, module pattern, IIFE",
+    "Misconceptions": "Closures copy the variable value | Closures only work with callbacks",
+    "Follow_up": "Explain the classic closure-in-loop problem with var and how to fix it."
+  },
+  {
+    "ID": "fs_007",
+    "Topic": "JavaScript",
+    "Difficulty": "Hard",
+    "Type": "Conceptual",
+    "Question": "Explain Promises and async/await in JavaScript. How do they handle asynchronous operations?",
+    "Expert_Answer": "JavaScript is single-threaded, uses the event loop for async [7]. Promise states: pending, fulfilled, rejected [7]. Methods: .then(), .catch(), .finally() [7]. Promise.all: resolves when all resolve [7]. async/await: syntactic sugar over promises [7]. async function returns promise [7]. await pauses execution until promise resolves (only inside async) [7]. Error handling: try-catch with await [7]. Event loop: microtask queue (promises) prioritized over callback queue [7].",
+    "Keywords": "Promise, async/await, event loop, callback hell, then, catch, microtask queue, single-threaded",
+    "Misconceptions": "async/await is synchronous | await can be used outside async functions",
+    "Follow_up": "What is the difference between Promise.all() and Promise.allSettled()?"
+  },
+  {
+    "ID": "fs_008",
+    "Topic": "jQuery",
+    "Difficulty": "Easy",
+    "Type": "Conceptual",
+    "Question": "What is jQuery? List its main advantages and common methods.",
+    "Expert_Answer": "jQuery is a JS library simplifying HTML manipulation, event handling, AJAX, and animations [8]. Advantages: cross-browser compatibility, concise $ syntax [8]. DOM methods: .html(), .text(), .val(), .attr(), .css(), .addClass(), .removeClass(), .toggleClass() [8]. Traversal: .parent(), .children(), .find() [8]. Events: .on(), .click(), .hover() [8]. Effects: .show(), .hide(), .fadeIn(), .animate() [8]. AJAX: $.ajax(), $.get(), $.post() [8]. Document ready: $(document).ready() or $(function(){}) [8].",
+    "Keywords": "jQuery, $, selector, .html(), .on(), .ajax(), document ready, DOM manipulation",
+    "Misconceptions": "jQuery is required for all web development | jQuery is faster than vanilla JS always",
+    "Follow_up": "How do you prevent the default action of an event in jQuery?"
+  },
+  {
+    "ID": "fs_009",
+    "Topic": "PHP",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Explain PHP sessions and cookies. What is the difference between them?",
+    "Expert_Answer": "HTTP is stateless; sessions and cookies maintain state [9]. Cookies: stored on client browser [9]. Set via setcookie(name, value, expiry) [9]. Sent with every request [9]. Max ~4KB [9]. PHP: $_COOKIE [9]. Sessions: stored on server; only session ID stored in cookie on client [9]. session_start() must be called first [9]. $_SESSION superglobal [9]. More secure (data on server) [9]. Usage: cookies for preferences/remember-me; sessions for authentication [9]. Security: httponly, secure flags for cookies; regenerate session ID after login [9].",
+    "Keywords": "session, cookie, setcookie, session_start, $_SESSION, $_COOKIE, stateless, session ID",
+    "Misconceptions": "Sessions can never be compromised | Cookies are always deleted when browser closes",
+    "Follow_up": "What is session hijacking and how can you prevent it?"
+  },
+  {
+    "ID": "fs_010",
+    "Topic": "PHP",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Explain form handling in PHP. How do you process GET and POST requests?",
+    "Expert_Answer": "GET: data in URL, $_GET superglobal, visible, cached, bookmarkable, max ~2KB [10]. Use for search/navigation [10]. POST: data in request body, $_POST superglobal, not visible in URL, no practical size limit [10]. Use for login, file upload, sensitive data [10]. $_REQUEST contains GET+POST+COOKIE [10]. Validation: isset(), empty(), filter_var() [10]. Sanitization: htmlspecialchars(), strip_tags() to prevent XSS [10]. File uploads: $_FILES, move_uploaded_file() [10]. CSRF protection: hidden token field [10].",
+    "Keywords": "GET, POST, $_GET, $_POST, form handling, validation, sanitization, XSS, htmlspecialchars",
+    "Misconceptions": "POST requests are encrypted | GET is always less secure than POST",
+    "Follow_up": "What is Cross-Site Scripting (XSS) and how do you prevent it in PHP?"
+  },
+  {
+    "ID": "fs_011",
+    "Topic": "React",
+    "Difficulty": "Hard",
+    "Type": "Conceptual",
+    "Question": "Explain React's component model, JSX, Props, and State.",
+    "Expert_Answer": "React builds UIs using components – reusable UI pieces (functional or class-based) [11]. JSX: HTML-like syntax in JS, transpiled by Babel [11]. class→className, for→htmlFor, single root element required [11]. Props: immutable data passed parent→child [11]. Read-only [11]. State: mutable data owned by component [11]. useState hook: const [count, setCount] = useState(0) [11]. State changes trigger re-render [11]. Data flows one-way [11]. Virtual DOM diffs with real DOM (reconciliation), batches updates [11].",
+    "Keywords": "React, JSX, props, state, useState, functional component, Virtual DOM, reconciliation, re-render",
+    "Misconceptions": "Props can be modified by child components | State changes are synchronous",
+    "Follow_up": "Explain the difference between controlled and uncontrolled components in React."
+  },
+  {
+    "ID": "fs_012",
+    "Topic": "React",
+    "Difficulty": "Hard",
+    "Type": "Conceptual",
+    "Question": "What are React Hooks? Explain useState, useEffect, and useContext.",
+    "Expert_Answer": "React Hooks (React 16.8) allow state and lifecycle features in functional components [12]. Rules: call at top level, only in functional components [12]. useState: local state management [12]. useEffect: side effects (API calls, subscriptions) [12]. Runs after every render by default [12]. Dependency array: useEffect(fn, [dep]) – runs when dep changes [12]. useEffect(fn, []) – runs once (like componentDidMount) [12]. Return function for cleanup (like componentWillUnmount) [12]. useContext: access context without prop drilling [12].",
+    "Keywords": "React Hooks, useState, useEffect, useContext, dependency array, side effects, cleanup, prop drilling",
+    "Misconceptions": "useEffect with empty array never runs | Hooks can be called conditionally",
+    "Follow_up": "How do you fetch data from an API using useEffect? What are the pitfalls?"
+  },
+  {
+    "ID": "fs_013",
+    "Topic": "Node.js",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "What is Node.js? Explain its event-driven, non-blocking I/O architecture.",
+    "Expert_Answer": "Node.js is a JavaScript runtime built on Chrome's V8 engine for server-side development [13]. Single-threaded, event-driven, non-blocking I/O [13]. Event Loop: continuously checks event queue [13]. When async operation completes (I/O, network), callback placed in event queue [13]. Non-blocking: instead of waiting for I/O, Node continues executing and processes callback when ready [13]. Suitable for: real-time apps, APIs, streaming [13]. Not suitable for CPU-intensive tasks (blocks event loop) [13]. NPM manages packages [13].",
+    "Keywords": "Node.js, event loop, non-blocking I/O, V8 engine, event-driven, NPM, single-threaded, callback",
+    "Misconceptions": "Node.js is multi-threaded | Node.js is only for small applications",
+    "Follow_up": "How do you create a basic HTTP server in Node.js without Express?"
+  },
+  {
+    "ID": "fs_014",
+    "Topic": "Node.js",
+    "Difficulty": "Hard",
+    "Type": "Conceptual",
+    "Question": "Explain Express.js. What are middleware functions and routing?",
+    "Expert_Answer": "Express.js is a minimal Node.js web framework [14]. Routing: defines endpoints using HTTP methods – app.get('/path', handler), app.post(), app.put(), app.delete() [14]. Route parameters: /users/:id → req.params.id [14]. Query params: req.query.q [14]. Middleware: functions with (req, res, next) signature [14]. Execute in order [14]. Uses: logging, authentication, body parsing, error handling [14]. Built-in: express.json(), express.static() [14]. Error middleware has 4 params (err, req, res, next) [14]. express.Router() modularizes routes [14].",
+    "Keywords": "Express.js, middleware, routing, app.get, req.params, req.body, next(), Router",
+    "Misconceptions": "Middleware only runs once | express.json() is automatically active without calling it",
+    "Follow_up": "How do you handle errors in Express.js? What is the difference between sync and async error handling?"
+  },
+  {
+    "ID": "fs_015",
+    "Topic": "REST APIs",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "What is a RESTful API? Explain the six constraints of REST architecture.",
+    "Expert_Answer": "REST is an architectural style for distributed hypermedia systems [15]. Six constraints: (1) Client-Server – separation of concerns, (2) Stateless – each request contains all necessary info, no session on server, (3) Cacheable – responses define themselves as cacheable/non-cacheable, (4) Uniform Interface – consistent URIs, standard HTTP methods, (5) Layered System – client cannot tell if connected to end server or intermediary, (6) Code on Demand (optional) [15]. HTTP status codes: 200 OK, 201 Created, 400 Bad Request, 401 Unauthorized, 404 Not Found, 500 Internal Server Error [15].",
+    "Keywords": "REST, stateless, CRUD, HTTP methods, GET, POST, PUT, DELETE, status codes, URI",
+    "Misconceptions": "REST requires JSON | RESTful and REST are completely different things",
+    "Follow_up": "What is the difference between PUT and PATCH in REST API?"
+  },
+  {
+    "ID": "fs_016",
+    "Topic": "Databases",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Compare SQL and NoSQL databases. When would you use each?",
+    "Expert_Answer": "SQL (Relational): structured tables with rows/columns [16]. Schema-based, ACID properties (Atomicity, Consistency, Isolation, Durability) [16]. Supports complex queries, JOINs, transactions [16]. Examples: MySQL, PostgreSQL [16]. Good for: complex relationships, financial applications [16]. NoSQL: flexible schema, horizontal scaling [16]. Types: Document (MongoDB), Key-Value (Redis), Column (Cassandra), Graph (Neo4j) [16]. BASE properties [16]. Better for: high volume, high speed, flexible schema [16]. CAP theorem: choose 2 of Consistency, Availability, Partition tolerance [16].",
+    "Keywords": "SQL, NoSQL, ACID, BASE, MongoDB, MySQL, schema, horizontal scaling, CAP theorem",
+    "Misconceptions": "NoSQL is always faster than SQL | NoSQL databases cannot do joins",
+    "Follow_up": "Explain the CAP theorem and how it applies to NoSQL database design."
+  },
+  {
+    "ID": "fs_017",
+    "Topic": "JavaScript",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Explain JavaScript event handling. What is event bubbling and event capturing?",
+    "Expert_Answer": "Events propagate in three phases: (1) Capturing – document root to target, (2) Target – reaches target element, (3) Bubbling – target up to root [17]. addEventListener third param: false (default) = bubbling, true = capturing [17]. event.stopPropagation() stops propagation [17]. event.preventDefault() prevents default action [17]. Event delegation: attach one listener to parent, handle events from multiple children using event.target [17]. Efficient, works for dynamically added elements [17]. event.currentTarget = element with listener; event.target = element that triggered [17].",
+    "Keywords": "event bubbling, event capturing, stopPropagation, preventDefault, event delegation, event.target, addEventListener",
+    "Misconceptions": "stopPropagation and preventDefault are the same | All events always bubble",
+    "Follow_up": "How do you implement event delegation for a dynamic list of items?"
+  },
+  {
+    "ID": "fs_018",
+    "Topic": "Node.js",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "What is npm? Explain package.json and the difference between dependencies and devDependencies.",
+    "Expert_Answer": "npm (Node Package Manager) manages JavaScript packages [18]. package.json: project metadata and dependency list [18]. Key fields: name, version, scripts (npm run command), dependencies (needed in production), devDependencies (only needed in development – testing tools, build tools) [18]. npm install: installs all dependencies [18]. node_modules should be in .gitignore [18]. package-lock.json: exact versions for reproducible installs [18]. Semantic versioning: ^1.2.3 allows minor/patch updates; ~1.2.3 allows patch only [18].",
+    "Keywords": "npm, package.json, dependencies, devDependencies, node_modules, package-lock.json, semantic versioning, npm install",
+    "Misconceptions": "node_modules should be committed to git | ^ and ~ have the same meaning in versioning",
+    "Follow_up": "What is the difference between npm and yarn? Why would you choose one over the other?"
+  },
+  {
+    "ID": "fs_019",
+    "Topic": "REST APIs",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "What is JSON? How is it used in web development?",
+    "Expert_Answer": "JSON (JavaScript Object Notation) is a lightweight, human-readable data interchange format [19]. Syntax: key-value pairs [19]. Types: string (double quotes), number, boolean, null, array, object [19]. No functions or comments [19]. Parsing: JSON.parse(string) → JS object; JSON.stringify(object) → JSON string [19]. Uses: REST API request/response, configuration files (package.json), localStorage storage, NoSQL document format (MongoDB) [19]. MIME type: application/json [19]. Fetch API: response.json() parses response [19].",
+    "Keywords": "JSON, JSON.parse, JSON.stringify, data interchange, key-value, REST API, MIME type",
+    "Misconceptions": "JSON supports all JavaScript types including functions | JSON.parse always creates a deep copy",
+    "Follow_up": "How do you handle circular references when using JSON.stringify?"
+  },
+  {
+    "ID": "fs_020",
+    "Topic": "HTML & CSS",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Explain CSS Flexbox and CSS Grid. When would you use each?",
+    "Expert_Answer": "Flexbox: one-dimensional layout (row or column) [20]. Container: display:flex, flex-direction, justify-content (main axis), align-items (cross axis), flex-wrap, gap [20]. Items: flex-grow, flex-shrink, flex-basis, align-self, order [20]. Best for: navbars, centering, distributing items in a row [20]. CSS Grid: two-dimensional (rows AND columns simultaneously) [20]. Container: display:grid, grid-template-columns, grid-template-rows, gap, grid-template-areas [20]. Best for: complex page layouts, overlapping elements [20]. Use Flexbox for components, Grid for overall layout [20].",
+    "Keywords": "Flexbox, CSS Grid, justify-content, align-items, grid-template-columns, flex-direction, responsive",
+    "Misconceptions": "Flexbox and Grid serve the same purpose | Grid cannot be used for small components",
+    "Follow_up": "How do you center an element both horizontally and vertically using Flexbox?"
+  }
+]

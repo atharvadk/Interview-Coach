@@ -1,0 +1,167 @@
+[
+  {
+    "ID": "os_001",
+    "Topic": "Introduction",
+    "Difficulty": "Easy",
+    "Type": "Conceptual",
+    "Question": "What is an Operating System? List its main goals and types.",
+    "Expert_Answer": "An OS is system software managing hardware resources and providing services [1]. Goals: (1) Convenience, (2) Efficiency, (3) Ability to evolve [1]. Types: (1) Batch OS, (2) Multiprogramming – multiple programs in memory simultaneously, (3) Time-Sharing/Multitasking – rapid CPU switching between users/processes, (4) Real-Time OS – deadline guarantees, (5) Distributed OS – manages multiple machines, (6) Parallel OS [1].",
+    "Keywords": "operating system, resource management, batch, multiprogramming, time-sharing, real-time, distributed",
+    "Misconceptions": "OS and kernel are the same thing | Real-time OS is always the fastest OS",
+    "Follow_up": "What is the difference between multiprogramming and multitasking?"
+  },
+  {
+    "ID": "os_002",
+    "Topic": "Process Management",
+    "Difficulty": "Easy",
+    "Type": "Conceptual",
+    "Question": "What is a Process? Explain the 5-state process model.",
+    "Expert_Answer": "A process is a program in execution, including code, data, stack, heap, and PCB [2]. PCB stores: PID, state, program counter, CPU registers, memory info, I/O status [2]. 5-state model: (1) New, (2) Ready, (3) Running, (4) Blocked/Waiting, (5) Terminated [2]. Transitions: New→Ready (admitted), Ready→Running (dispatched), Running→Blocked (I/O request), Blocked→Ready (I/O complete), Running→Terminated (exit) [2].",
+    "Keywords": "process, PCB, process states, new, ready, running, blocked, terminated, 5-state model",
+    "Misconceptions": "Process and program are the same | A process can go directly from blocked to running",
+    "Follow_up": "What information is stored in a Process Control Block (PCB)?"
+  },
+  {
+    "ID": "os_003",
+    "Topic": "Process Management",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Differentiate between a Process and a Thread. What are the advantages of multithreading?",
+    "Expert_Answer": "Process: independent unit with own address space [3]. Heavy-weight, expensive context switch [3]. Thread: lightweight, shares code, data, and heap with other threads in same process; has own registers, stack, and thread ID [3]. Multithreading advantages: (1) Responsiveness, (2) Resource sharing without IPC, (3) Economy – faster creation, (4) Scalability on multicore [3]. ULT – managed by user library; KLT – managed by OS [3].",
+    "Keywords": "process, thread, lightweight, shared memory, PCB, multithreading, user-level, kernel-level",
+    "Misconceptions": "Threads have separate address spaces | User-level threads are always faster",
+    "Follow_up": "What are the three multithreading models? (many-to-one, one-to-one, many-to-many)"
+  },
+  {
+    "ID": "os_004",
+    "Topic": "CPU Scheduling",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Compare FCFS, SJF, Round Robin, and Priority scheduling algorithms.",
+    "Expert_Answer": "FCFS: non-preemptive, simple, suffers from convoy effect (long jobs block short ones) [4]. SJF: shortest burst first, optimal average waiting time, but requires knowing burst time; SRTF is preemptive SJF [4]. Round Robin: preemptive with time quantum q; if q large → FCFS; if q small → high context-switch overhead [4]. Fair [4]. Priority: preemptive or non-preemptive; starvation possible (solved by aging) [4].",
+    "Keywords": "FCFS, SJF, Round Robin, priority scheduling, preemptive, non-preemptive, convoy effect, starvation, aging",
+    "Misconceptions": "SJF is always practical | Round Robin always has highest throughput",
+    "Follow_up": "Calculate average waiting time for FCFS with P1(24ms), P2(3ms), P3(3ms) all arriving at time 0."
+  },
+  {
+    "ID": "os_005",
+    "Topic": "Process Synchronization",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "What is the Critical Section Problem? State the three requirements for a solution.",
+    "Expert_Answer": "Critical Section is a code segment where shared resources are accessed [5]. Three requirements: (1) Mutual Exclusion – only one process can be in CS at a time, (2) Progress – if no process is in CS and some wish to enter, the decision cannot be postponed indefinitely, (3) Bounded Waiting – a limit must exist on the number of times others can enter CS before a requesting process [5]. Peterson's solution satisfies all three for two processes [5].",
+    "Keywords": "critical section, mutual exclusion, progress, bounded waiting, Peterson's solution, semaphore, mutex",
+    "Misconceptions": "Mutual exclusion alone is sufficient | Peterson's solution works for more than 2 processes",
+    "Follow_up": "What is a race condition? Give an example."
+  },
+  {
+    "ID": "os_006",
+    "Topic": "Process Synchronization",
+    "Difficulty": "Hard",
+    "Type": "Conceptual",
+    "Question": "Explain Semaphores. Describe the Producer-Consumer problem solution using semaphores.",
+    "Expert_Answer": "Semaphore S accessed only via wait()/P() and signal()/V() atomically [6]. wait(S): if S≤0, block; else S-- [6]. signal(S): S++, wake one waiting process [6]. Binary semaphore: S∈{0,1} [6]. Counting: S = number of available resources [6]. Producer-Consumer: mutex=1, empty=N, full=0 [6]. Producer: wait(empty)→wait(mutex)→produce→signal(mutex)→signal(full) [6]. Consumer: wait(full)→wait(mutex)→consume→signal(mutex)→signal(empty) [6].",
+    "Keywords": "semaphore, wait, signal, binary semaphore, counting semaphore, producer-consumer, mutex",
+    "Misconceptions": "Semaphores are the same as mutex locks | wait() decrements first then checks",
+    "Follow_up": "What is the Dining Philosophers problem and how is it solved using semaphores?"
+  },
+  {
+    "ID": "os_007",
+    "Topic": "Deadlock",
+    "Difficulty": "Hard",
+    "Type": "Conceptual",
+    "Question": "State the four necessary conditions for Deadlock. Explain deadlock prevention and avoidance.",
+    "Expert_Answer": "Coffman's conditions (all four must hold): (1) Mutual Exclusion, (2) Hold and Wait, (3) No Preemption, (4) Circular Wait [7]. Prevention: eliminate at least one condition [7]. Avoidance: Banker's Algorithm – system is in safe state if a safe sequence of process execution exists [7]. Resource Allocation Graph: cycle indicates possible deadlock [7]. For single resource instances, cycle = definite deadlock [7].",
+    "Keywords": "deadlock, Coffman conditions, mutual exclusion, circular wait, Banker's algorithm, safe state, RAG",
+    "Misconceptions": "Deadlock can occur with only one resource | Banker's algorithm prevents all deadlocks",
+    "Follow_up": "Explain deadlock detection and recovery methods."
+  },
+  {
+    "ID": "os_008",
+    "Topic": "Memory Management",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Explain Paging in OS. How does address translation work?",
+    "Expert_Answer": "Paging divides physical memory into fixed-size frames and logical memory into same-size pages [8]. Eliminates external fragmentation but causes internal fragmentation [8]. Logical address = page number (p) + page offset (d) [8]. Page table maps p to frame number f [8]. Physical address = f × frame_size + d [8]. TLB caches page table entries for O(1) access [8]. TLB hit reduces memory accesses to 1 instead of 2 [8].",
+    "Keywords": "paging, frames, pages, page table, TLB, logical address, physical address, address translation",
+    "Misconceptions": "Paging eliminates all fragmentation | TLB is always fully accurate",
+    "Follow_up": "What is the difference between paging and segmentation?"
+  },
+  {
+    "ID": "os_009",
+    "Topic": "Memory Management",
+    "Difficulty": "Hard",
+    "Type": "Conceptual",
+    "Question": "Explain Virtual Memory and page replacement algorithms: FIFO, LRU, and Optimal.",
+    "Expert_Answer": "Virtual Memory allows execution without full program in memory [9]. Pages loaded on demand (demand paging) [9]. Page fault: page not in memory, OS loads from disk [9]. Thrashing: excessive page faulting [9]. FIFO: replace oldest page (Belady's anomaly – more frames can cause more faults) [9]. LRU: replace page not used for longest time, good approximation of Optimal [9]. Optimal: replace page not needed longest in future (theoretical benchmark, requires future knowledge) [9].",
+    "Keywords": "virtual memory, demand paging, page fault, thrashing, FIFO, LRU, Optimal, Belady's anomaly, page replacement",
+    "Misconceptions": "More frames always reduce page faults | LRU is always optimal",
+    "Follow_up": "What is Belady's Anomaly and which algorithm is free from it?"
+  },
+  {
+    "ID": "os_010",
+    "Topic": "Memory Management",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Explain memory allocation strategies: First Fit, Best Fit, Worst Fit, and Next Fit.",
+    "Expert_Answer": "First Fit: allocate first hole large enough [10]. Fast, good average performance [10]. Best Fit: allocate smallest hole that fits [10]. Minimizes wasted space but slow (search all holes), leaves tiny unusable fragments [10]. Worst Fit: allocate largest hole [10]. Leaves large remaining fragments – poor performance [10]. Next Fit: like First Fit but starts from last allocated position [10]. First Fit and Best Fit outperform Worst Fit [10]. External fragmentation solved by compaction or paging [10].",
+    "Keywords": "first fit, best fit, worst fit, next fit, fragmentation, external fragmentation, compaction",
+    "Misconceptions": "Best fit always outperforms first fit | Worst fit minimizes fragmentation",
+    "Follow_up": "What is the difference between internal and external fragmentation?"
+  },
+  {
+    "ID": "os_011",
+    "Topic": "I/O Management",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Explain disk scheduling algorithms: FCFS, SSTF, SCAN, and C-SCAN.",
+    "Expert_Answer": "FCFS: serves requests in arrival order [11]. Simple, no starvation but poor head movement [11]. SSTF: serves nearest request [11]. Reduces seek time but starvation possible for far requests [11]. SCAN (Elevator): head moves in one direction servicing requests, reverses at end [11]. Fair, no starvation [11]. C-SCAN: moves one direction, jumps to beginning at end [11]. More uniform waiting time [11]. LOOK/C-LOOK: like SCAN/C-SCAN but reverses at last request, not physical end [11].",
+    "Keywords": "disk scheduling, FCFS, SSTF, SCAN, C-SCAN, seek time, starvation, elevator algorithm",
+    "Misconceptions": "SSTF is always optimal | SCAN causes more head movement than C-SCAN",
+    "Follow_up": "Calculate total head movement for SSTF with initial head at 50 and requests: 95, 180, 34, 119, 11, 123."
+  },
+  {
+    "ID": "os_012",
+    "Topic": "Process Synchronization",
+    "Difficulty": "Hard",
+    "Type": "Conceptual",
+    "Question": "Explain Classical Synchronization Problems: Reader-Writer and Dining Philosophers.",
+    "Expert_Answer": "Reader-Writer: multiple readers can read simultaneously, writers need exclusive access [12]. First solution: readers don't wait unless writer has access (writers may starve) [12]. Second: once writer ready, no new readers (readers may starve) [12]. Dining Philosophers: 5 philosophers, 5 forks, deadlock if all pick left fork [12]. Solutions: (1) Allow at most 4 philosophers simultaneously, (2) Pick both forks atomically, (3) Asymmetric – odd pick left then right, even pick right then left [12].",
+    "Keywords": "reader-writer, dining philosophers, starvation, deadlock, semaphore, mutex, synchronization",
+    "Misconceptions": "Reader-Writer has no solution without starvation | Dining Philosophers has only one solution",
+    "Follow_up": "How does Monitor solve synchronization problems compared to semaphores?"
+  },
+  {
+    "ID": "os_013",
+    "Topic": "Introduction",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "What are System Calls? List types and give examples.",
+    "Expert_Answer": "System calls provide the interface between user programs and the OS kernel [13]. Types: (1) Process control – fork(), exec(), exit(), wait(), (2) File management – open(), read(), write(), close(), (3) Device management – ioctl(), (4) Information maintenance – getpid(), gettime(), (5) Communication – pipe(), socket(), send(), recv(), (6) Protection – chmod() [13]. System calls switch from user mode to kernel mode via a trap instruction [13].",
+    "Keywords": "system calls, fork, exec, open, read, write, user mode, kernel mode, trap",
+    "Misconceptions": "System calls are the same as function calls | System calls always slow down programs",
+    "Follow_up": "What is the difference between fork() and exec() in Unix?"
+  },
+  {
+    "ID": "os_014",
+    "Topic": "Process Management",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Explain race condition, mutual exclusion, and critical section with hardware solutions.",
+    "Expert_Answer": "Race Condition: outcome depends on execution order [14]. Example: two threads read count=5, both write 6 (should be 7) [14]. Mutual Exclusion: only one process in critical section at a time [14]. Hardware solutions: Test-and-Set (TAS) and Compare-and-Swap (CAS) – atomic hardware instructions [14]. Software: Peterson's algorithm [14]. OS: mutex locks (blocking), spinlocks (busy waiting – suitable for short waits on multicore) [14].",
+    "Keywords": "race condition, mutual exclusion, critical section, Test-and-Set, Peterson's algorithm, spinlock, mutex",
+    "Misconceptions": "Mutual exclusion eliminates all concurrency problems | Spinlocks are never used in practice",
+    "Follow_up": "What is the difference between a spinlock and a mutex?"
+  },
+  {
+    "ID": "os_015",
+    "Topic": "Memory Management",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Explain Segmentation. How does it differ from paging?",
+    "Expert_Answer": "Segmentation divides memory into variable-sized logical units called segments (code, data, stack) [15]. Each segment has base address and limit in segment table [15]. Logical address: <segment_number, offset> [15]. Physical address = segment_base + offset (if offset < limit) [15]. Segmentation: programmer-visible, supports protection/sharing, causes external fragmentation [15]. Paging: programmer-invisible, fixed size, causes internal fragmentation [15]. Intel x86 combines both [15].",
+    "Keywords": "segmentation, segment table, base, limit, external fragmentation, logical unit, paging vs segmentation",
+    "Misconceptions": "Segmentation uses fixed-size blocks | Paging causes external fragmentation",
+    "Follow_up": "In Intel x86 architecture, how are segmentation and paging used together?"
+  }
+]

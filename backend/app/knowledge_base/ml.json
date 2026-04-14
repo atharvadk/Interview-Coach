@@ -1,0 +1,222 @@
+[
+  {
+    "ID": "ml_001",
+    "Topic": "Types of Learning",
+    "Difficulty": "Easy",
+    "Type": "Conceptual",
+    "Question": "Differentiate between Supervised, Unsupervised, and Reinforcement Learning with examples.",
+    "Expert_Answer": "Supervised Learning: trained on labeled data. Examples: classification (spam detection), regression (house price prediction). Unsupervised Learning: finds patterns in unlabeled data. Examples: clustering (customer segmentation), PCA. Reinforcement Learning: agent learns by interacting with environment, receiving rewards/penalties. Examples: game playing (AlphaGo). Key difference: supervised needs labels, unsupervised does not, reinforcement uses reward signals. [1]",
+    "Keywords": "supervised, unsupervised, reinforcement, labeled, clustering, classification, reward",
+    "Misconceptions": "Unsupervised learning is less powerful | Reinforcement learning needs labeled data",
+    "Follow_up": "Give a real-world example of each type of learning."
+  },
+  {
+    "ID": "ml_002",
+    "Topic": "Bias and Variance",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Explain the Bias-Variance tradeoff. How do underfitting and overfitting relate to it?",
+    "Expert_Answer": "Bias is error due to wrong assumptions – underfitting (model too simple, misses patterns). Variance is error due to sensitivity to training data – overfitting (model too complex, memorizes noise). Total error = Bias² + Variance + Irreducible noise. Underfitting = high bias, low variance. Overfitting = low bias, high variance. Solutions: regularization reduces variance; increasing complexity reduces bias. [2]",
+    "Keywords": "bias, variance, underfitting, overfitting, regularization, tradeoff, complexity",
+    "Misconceptions": "More data always fixes overfitting | Complex models always overfit",
+    "Follow_up": "How does cross-validation help detect overfitting?"
+  },
+  {
+    "ID": "ml_003",
+    "Topic": "Decision Trees",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "How does a Decision Tree work? Explain Information Gain and Gini Impurity.",
+    "Expert_Answer": "Decision Tree recursively splits data on the feature best separating classes. Information Gain (ID3): IG = Entropy(parent) – weighted_avg(Entropy(children)). Entropy = -Σ p×log2(p). Selects highest IG. Gini Impurity (CART): Gini = 1 – Σ pi². Selects lowest Gini. Advantages: interpretable, handles mixed data. Disadvantages: prone to overfitting, unstable. [3]",
+    "Keywords": "decision tree, information gain, entropy, Gini impurity, splitting, ID3, CART",
+    "Misconceptions": "Decision trees never overfit | Information gain and Gini always give same results",
+    "Follow_up": "How does Random Forest overcome decision tree overfitting?"
+  },
+  {
+    "ID": "ml_004",
+    "Topic": "Decision Trees",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Explain the Random Forest algorithm. How does it improve upon a single decision tree?",
+    "Expert_Answer": "Random Forest builds multiple decision trees on random bootstrap samples of training data and random feature subsets, aggregating predictions (majority vote for classification, average for regression). Improvements: (1) Reduces overfitting by averaging, (2) Reduces variance through bagging, (3) Robust to noise and outliers, (4) Feature importance can be computed. Disadvantage: less interpretable than single tree. [4]",
+    "Keywords": "random forest, ensemble, bagging, bootstrap, feature subset, majority vote, variance reduction",
+    "Misconceptions": "More trees always lead to overfitting | Random Forest cannot compute feature importance",
+    "Follow_up": "What is Out-of-Bag (OOB) error in Random Forest?"
+  },
+  {
+    "ID": "ml_005",
+    "Topic": "Bayesian Learning",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Explain the Naive Bayes classifier. Why is it called \"naive\"?",
+    "Expert_Answer": "Naive Bayes applies Bayes' theorem with the naive assumption that features are conditionally independent given the class: P(class|features) ∝ P(class) × Π P(feature_i|class). Called \"naive\" because real-world features are rarely independent. Despite this, performs well especially for text classification. Variants: Gaussian NB, Multinomial NB, Bernoulli NB. Advantage: fast, works with small data, handles multi-class. [5]",
+    "Keywords": "Naive Bayes, Bayes theorem, conditional independence, prior, likelihood, posterior, text classification",
+    "Misconceptions": "Naive Bayes requires large datasets | Independence assumption must hold for NB to work",
+    "Follow_up": "How do you handle zero probability in Naive Bayes? (Laplace smoothing)"
+  },
+  {
+    "ID": "ml_006",
+    "Topic": "SVM",
+    "Difficulty": "Hard",
+    "Type": "Conceptual",
+    "Question": "Explain Support Vector Machine (SVM). What is the role of the kernel function?",
+    "Expert_Answer": "SVM finds the optimal hyperplane maximizing margin between classes. Support vectors are training points closest to the boundary. For non-linear data, kernel functions implicitly map data to higher dimensions where it becomes linearly separable. Common kernels: Linear, Polynomial, RBF/Gaussian K(x,y) = exp(-γ||x-y||²), Sigmoid. The kernel trick avoids explicit high-dimensional mapping, making computation feasible. [6]",
+    "Keywords": "SVM, hyperplane, margin, support vectors, kernel, RBF, kernel trick, non-linear",
+    "Misconceptions": "SVM only works for binary classification | Larger margin always means better generalization",
+    "Follow_up": "What is the C parameter in SVM and how does it affect the bias-variance tradeoff?"
+  },
+  {
+    "ID": "ml_007",
+    "Topic": "Clustering",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Explain the K-Means clustering algorithm. What are its limitations?",
+    "Expert_Answer": "K-Means partitions n points into k clusters: (1) Initialize k centroids randomly, (2) Assign each point to nearest centroid (Euclidean distance), (3) Recompute centroids as mean of assigned points, (4) Repeat until convergence. Minimizes WCSS. Limitations: need to specify k, sensitive to initial centroids (use K-Means++), assumes spherical clusters, sensitive to outliers, may converge to local optima. [7]",
+    "Keywords": "K-means, centroid, WCSS, Euclidean distance, convergence, K-Means++, clusters",
+    "Misconceptions": "K-means always finds global optimum | K-means works well for all cluster shapes",
+    "Follow_up": "How do you determine optimal k using the Elbow method?"
+  },
+  {
+    "ID": "ml_008",
+    "Topic": "Clustering",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Compare Hierarchical Clustering and DBSCAN. When would you use each?",
+    "Expert_Answer": "Hierarchical Clustering builds a dendrogram. Agglomerative (bottom-up): start with each point as a cluster, merge closest. No need to specify k. Disadvantage: O(n²) or O(n³) complexity. DBSCAN: density-based, groups closely packed points. Core points: ≥ MinPts within ε radius. Finds arbitrary shape clusters, detects outliers. Sensitive to ε and MinPts. Use hierarchical to explore cluster structure; DBSCAN for arbitrary shapes and noisy data. [8]",
+    "Keywords": "hierarchical clustering, agglomerative, divisive, dendrogram, DBSCAN, core points, epsilon, MinPts, density",
+    "Misconceptions": "Hierarchical clustering always requires dendrograms | DBSCAN works well for all densities",
+    "Follow_up": "How does DBSCAN classify noise points (outliers)?"
+  },
+  {
+    "ID": "ml_009",
+    "Topic": "Evaluation Metrics",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Explain the Confusion Matrix. Derive Precision, Recall, and F1-score.",
+    "Expert_Answer": "Confusion Matrix: TP, TN, FP, FN. Accuracy = (TP+TN)/(TP+TN+FP+FN). Precision = TP/(TP+FP) – of predicted positives, how many are actually positive (relevant for spam detection). Recall = TP/(TP+FN) – of actual positives, how many were found (relevant for disease detection). F1-score = 2×(Precision×Recall)/(Precision+Recall) – harmonic mean. AUC-ROC measures overall classifier performance. [9]",
+    "Keywords": "confusion matrix, precision, recall, F1-score, TP, TN, FP, FN, accuracy, ROC",
+    "Misconceptions": "Accuracy is always the best metric | High precision always means high recall",
+    "Follow_up": "In medical diagnosis, which is more important: precision or recall? Why?"
+  },
+  {
+    "ID": "ml_010",
+    "Topic": "Validation",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Explain K-Fold Cross Validation. Why is it preferred over a simple train-test split?",
+    "Expert_Answer": "K-Fold splits data into k equal folds. Model trained on k-1 folds and tested on the remaining fold, repeated k times. Final performance = average of k scores. Advantages: uses all data for training and testing, less sensitive to random partition, better generalization estimate, detects overfitting. Common k: 5 or 10. Stratified K-Fold preserves class distribution. k=n is Leave-One-Out CV (LOOCV). [10]",
+    "Keywords": "k-fold, cross validation, generalization, overfitting, LOOCV, stratified, folds",
+    "Misconceptions": "K-fold guarantees no overfitting | More folds always better",
+    "Follow_up": "What is the computational cost of LOOCV compared to 10-fold CV?"
+  },
+  {
+    "ID": "ml_011",
+    "Topic": "Ensemble Learning",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Explain the difference between Bagging and Boosting. Give an example of each.",
+    "Expert_Answer": "Bagging: trains multiple models in parallel on bootstrap samples, combines by majority vote/averaging. Reduces variance. Example: Random Forest. Boosting: trains models sequentially, each focusing on errors of the previous. Reduces bias. Examples: AdaBoost (increases weight of misclassified), Gradient Boosting (fits new model to residuals), XGBoost. Bagging for high-variance models; Boosting for high-bias models. [11]",
+    "Keywords": "bagging, boosting, AdaBoost, Gradient Boosting, Random Forest, ensemble, bootstrap, sequential",
+    "Misconceptions": "Boosting always outperforms bagging | Both methods solve the same problem",
+    "Follow_up": "What are the hyperparameters of AdaBoost?"
+  },
+  {
+    "ID": "ml_012",
+    "Topic": "Dimensionality Reduction",
+    "Difficulty": "Hard",
+    "Type": "Conceptual",
+    "Question": "Explain PCA. What is an eigenvalue and eigenvector in this context?",
+    "Expert_Answer": "PCA reduces dimensionality by finding orthogonal directions of maximum variance. Steps: (1) Standardize data, (2) Compute covariance matrix, (3) Compute eigenvalues and eigenvectors, (4) Sort by eigenvalue, (5) Select top-k eigenvectors, (6) Project data. Eigenvectors define principal component directions; eigenvalues represent variance along each direction. PCA is unsupervised and linear. Applications: noise reduction, visualization, feature extraction. [12]",
+    "Keywords": "PCA, principal components, eigenvectors, eigenvalues, covariance matrix, variance, dimensionality reduction",
+    "Misconceptions": "PCA removes correlated features | More principal components always means better classification",
+    "Follow_up": "How does SVD relate to PCA?"
+  },
+  {
+    "ID": "ml_013",
+    "Topic": "Association Rules",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Explain the Apriori Algorithm. Define Support, Confidence, and Lift.",
+    "Expert_Answer": "Apriori mines frequent itemsets. Support(A→B) = P(A∪B) = transactions with both/total. Confidence(A→B) = support(A∪B)/support(A). Lift(A→B) = Confidence(A→B)/support(B). Lift>1 means positive correlation. Apriori principle: any subset of a frequent itemset is also frequent (anti-monotone). Generates candidate itemsets, prunes infrequent ones. Used in market basket analysis. [13]",
+    "Keywords": "Apriori, association rules, support, confidence, lift, frequent itemsets, market basket",
+    "Misconceptions": "Higher confidence always means a useful rule | Apriori finds causal relationships",
+    "Follow_up": "What is the drawback of Apriori and how does FP-growth address it?"
+  },
+  {
+    "ID": "ml_014",
+    "Topic": "Reinforcement Learning",
+    "Difficulty": "Hard",
+    "Type": "Conceptual",
+    "Question": "Explain Q-Learning and the Bellman equation.",
+    "Expert_Answer": "Q-Learning is a model-free RL algorithm learning Q(s,a) = value of taking action a in state s. Bellman update: Q(s,a) ← Q(s,a) + α[r + γ max_a' Q(s',a') – Q(s,a)], where α=learning rate, γ=discount factor, r=reward, s'=next state. Policy: select action with max Q-value. ε-greedy balances exploration/exploitation. Q-Learning is off-policy. [14]",
+    "Keywords": "Q-learning, Bellman equation, reward, discount factor, Q-value, exploration, exploitation, epsilon-greedy, model-free",
+    "Misconceptions": "Q-learning requires a model of the environment | Higher discount factor is always better",
+    "Follow_up": "What is the difference between Q-learning and SARSA?"
+  },
+  {
+    "ID": "ml_015",
+    "Topic": "Neural Networks",
+    "Difficulty": "Hard",
+    "Type": "Conceptual",
+    "Question": "Explain the backpropagation algorithm in Artificial Neural Networks.",
+    "Expert_Answer": "Backpropagation computes gradients of the loss using the chain rule. Steps: (1) Forward pass – compute output and loss, (2) Backward pass – compute gradient at output layer, propagate backward: δ(l) = δ(l+1) × W(l+1) × activation_derivative(z(l)), (3) Update weights: W = W – α × ∇loss. Vanishing gradient: gradients become very small in deep networks. Solved by ReLU, batch normalization, residual connections. [15]",
+    "Keywords": "backpropagation, chain rule, gradient descent, forward pass, backward pass, vanishing gradient, loss function, activation function",
+    "Misconceptions": "Backpropagation trains any function | More layers always improve accuracy",
+    "Follow_up": "What is the vanishing gradient problem and how is it addressed?"
+  },
+  {
+    "ID": "ml_016",
+    "Topic": "Concept Learning",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Explain the Find-S algorithm. What are its assumptions and limitations?",
+    "Expert_Answer": "Find-S finds the most specific hypothesis consistent with all positive training examples. It starts from the most specific hypothesis and generalizes only to accommodate positive examples; it ignores negative examples. Assumptions: hypothesis space contains true concept, no noise. Limitations: cannot determine correctness (ignores negatives), cannot handle inconsistent data, does not consider multiple hypotheses. [16]",
+    "Keywords": "Find-S, hypothesis, specific, general, positive examples, concept learning, generalization",
+    "Misconceptions": "Find-S considers negative examples | Find-S finds the optimal hypothesis",
+    "Follow_up": "How does the Candidate Elimination algorithm improve upon Find-S?"
+  },
+  {
+    "ID": "ml_017",
+    "Topic": "KNN",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Explain the K-Nearest Neighbors (KNN) algorithm. What is the effect of varying K?",
+    "Expert_Answer": "KNN classifies a new point by finding K nearest training points and assigning the majority class. It is a lazy learner – no training phase, computation at prediction time. Small K: complex boundary, low bias, high variance, overfitting. Large K: smooth boundary, high bias, low variance, underfitting. Optimal K found by cross-validation. Drawbacks: O(n) prediction time, sensitive to irrelevant features and scale (requires normalization). [17]",
+    "Keywords": "KNN, nearest neighbors, K value, distance, lazy learner, bias variance, Euclidean distance, normalization",
+    "Misconceptions": "KNN requires a training phase | Larger K is always better",
+    "Follow_up": "How does feature normalization affect KNN performance?"
+  },
+  {
+    "ID": "ml_018",
+    "Topic": "Evaluation Metrics",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "What is an ROC curve and AUC? How are they used to evaluate a classifier?",
+    "Expert_Answer": "ROC curve plots True Positive Rate (Recall) vs False Positive Rate at various classification thresholds. Perfect classifier AUC=1, random classifier AUC=0.5. AUC summarizes overall performance across all thresholds, independent of class distribution. Useful for imbalanced datasets. Precision-Recall curve is preferred for highly imbalanced data. [18]",
+    "Keywords": "ROC, AUC, true positive rate, false positive rate, threshold, sensitivity, specificity",
+    "Misconceptions": "AUC of 0.8 means 80% accuracy | ROC works for multi-class directly",
+    "Follow_up": "When would you prefer Precision-Recall curve over ROC?"
+  },
+  {
+    "ID": "ml_019",
+    "Topic": "Hidden Markov Models",
+    "Difficulty": "Hard",
+    "Type": "Conceptual",
+    "Question": "What is a Hidden Markov Model (HMM)? Describe its three fundamental problems.",
+    "Expert_Answer": "HMM is a statistical model with hidden states and visible observations. Components: States (hidden), Observations, Transition probabilities A, Emission probabilities B, Initial distribution π. Three problems: (1) Evaluation (Forward algorithm) – P(observations|model), (2) Decoding (Viterbi) – most likely state sequence, (3) Learning (Baum-Welch/EM) – find model parameters given observations. Applications: speech recognition, NLP, bioinformatics. [19]",
+    "Keywords": "HMM, hidden states, observations, transition probabilities, emission probabilities, Viterbi, Baum-Welch, forward algorithm",
+    "Misconceptions": "HMM requires all states to be observable | HMM current state depends on all history",
+    "Follow_up": "What is the Markov assumption in HMM?"
+  },
+  {
+    "ID": "ml_020",
+    "Topic": "Genetic Algorithms",
+    "Difficulty": "Hard",
+    "Type": "Conceptual",
+    "Question": "Explain Genetic Algorithms and their key operators.",
+    "Expert_Answer": "Genetic Algorithms are search/optimization algorithms inspired by natural evolution. A population of candidate solutions (chromosomes) evolves over generations. Key operators: (1) Selection – choose fittest individuals (roulette wheel, tournament), (2) Crossover – combine parts of two parents to create offspring, (3) Mutation – random change to maintain diversity, (4) Fitness function – evaluates solution quality. Applications: scheduling, optimization, feature selection. [20]",
+    "Keywords": "genetic algorithm, chromosome, fitness function, selection, crossover, mutation, population, evolution",
+    "Misconceptions": "Genetic algorithms always find global optimum | More generations always improve solution",
+    "Follow_up": "What is the role of mutation rate in genetic algorithms?"
+  }
+]

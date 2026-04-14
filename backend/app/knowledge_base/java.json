@@ -1,0 +1,211 @@
+[
+  {
+    "ID": "java_001",
+    "Topic": "OOP Concepts",
+    "Difficulty": "Easy",
+    "Type": "Conceptual",
+    "Question": "What are the four pillars of Object-Oriented Programming? Explain each briefly.",
+    "Expert_Answer": "(1) Encapsulation: binding data and methods, hiding internal details via access modifiers [1]. Getter/setter provide controlled access [1]. (2) Inheritance: new class inherits properties and methods of parent using 'extends' [1]. Promotes code reusability [1]. (3) Polymorphism: same method behaves differently [1]. Compile-time: method overloading [1]. Runtime: method overriding [1]. (4) Abstraction: hiding implementation, showing only relevant features via abstract classes and interfaces [1].",
+    "Keywords": "encapsulation, inheritance, polymorphism, abstraction, extends, overloading, overriding, access modifiers",
+    "Misconceptions": "Encapsulation is the same as abstraction | Polymorphism only refers to method overloading",
+    "Follow_up": "What is the difference between method overloading and method overriding?"
+  },
+  {
+    "ID": "java_002",
+    "Topic": "Classes and Objects",
+    "Difficulty": "Easy",
+    "Type": "Conceptual",
+    "Question": "Explain the difference between static and instance variables/methods in Java.",
+    "Expert_Answer": "Static variables/methods belong to the class, shared by all objects, accessed via ClassName.method() [2]. Created when class loads, one copy in memory [2]. Static methods cannot access instance variables or use 'this' [2]. Static blocks execute when class loads [2]. Instance variables/methods belong to each object; each has its own copy [2]. Instance blocks execute before constructors [2]. Main method is static because JVM calls it without creating an object [2].",
+    "Keywords": "static, instance, class variable, object, shared, this keyword, static block, instance block",
+    "Misconceptions": "Static methods can access instance variables | Static variables are always thread-safe",
+    "Follow_up": "When would you use a static factory method instead of a constructor?"
+  },
+  {
+    "ID": "java_003",
+    "Topic": "Constructors",
+    "Difficulty": "Easy",
+    "Type": "Conceptual",
+    "Question": "Explain types of constructors in Java: default, parameterized, and copy constructors.",
+    "Expert_Answer": "Default constructor: no-argument [3]. Java provides one automatically only if no constructor is defined [3]. Parameterized constructor: accepts arguments to initialize fields with specific values; multiple parameterized constructors = constructor overloading [3]. Copy constructor: takes object of same class and copies its values (Java has no built-in copy constructor like C++) [3]. Constructor chaining: this() calls same class constructor; super() calls parent – both must be the first statement [3].",
+    "Keywords": "default constructor, parameterized constructor, copy constructor, constructor overloading, this(), super(), constructor chaining",
+    "Misconceptions": "Java always provides a default constructor | Constructors have a return type",
+    "Follow_up": "What is the difference between deep copy and shallow copy?"
+  },
+  {
+    "ID": "java_004",
+    "Topic": "Inheritance",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Explain inheritance types in Java. Why doesn't Java support multiple inheritance through classes?",
+    "Expert_Answer": "Java supports: Single, Multilevel (A extends B extends C), Hierarchical (multiple classes extend one parent) [4]. Java does NOT support multiple inheritance through classes due to the Diamond Problem – ambiguity when two parent classes have the same method [4]. Java resolves this with interfaces (a class can implement multiple) [4]. 'final' class cannot be inherited [4]. Method hiding: static methods in child hide parent static (not overriding) [4].",
+    "Keywords": "single inheritance, multilevel inheritance, hierarchical inheritance, diamond problem, interface, super, final",
+    "Misconceptions": "Java supports multiple inheritance through classes | Method hiding is the same as overriding",
+    "Follow_up": "Explain method hiding vs method overriding with an example."
+  },
+  {
+    "ID": "java_005",
+    "Topic": "Polymorphism",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Explain runtime polymorphism (method overriding) and compile-time polymorphism (method overloading).",
+    "Expert_Answer": "Method Overloading (compile-time): same method name, different parameter list in same class [5]. Resolved at compile time (static binding) [5]. Return type alone cannot differentiate [5]. Example: add(int,int) and add(double,double) [5]. Method Overriding (runtime): subclass redefines parent's method with same name and signature [5]. Resolved at runtime (dynamic binding) [5]. @Override recommended [5]. Cannot override static, private, or final methods [5]. Covariant return type is allowed [5].",
+    "Keywords": "method overloading, method overriding, compile-time, runtime, dynamic binding, static binding, @Override, covariant return type",
+    "Misconceptions": "Overloading and overriding are interchangeable | You can override static methods in Java",
+    "Follow_up": "What is dynamic method dispatch? Give a code example."
+  },
+  {
+    "ID": "java_006",
+    "Topic": "Abstraction",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Differentiate between Abstract Classes and Interfaces in Java. When would you use each?",
+    "Expert_Answer": "Abstract Class: can have abstract and concrete methods, constructors, instance variables [6]. Cannot be instantiated [6]. A class can extend only one [6]. Use when classes share common state and behavior [6]. Interface: all methods abstract by default (Java 8+: default and static methods allowed) [6]. No instance variables (only constants) [6]. A class can implement multiple interfaces [6]. Use for defining contracts [6]. Java 8 default methods allow code reuse without breaking existing implementations [6].",
+    "Keywords": "abstract class, interface, abstract method, default method, implements, extends, multiple inheritance, contract",
+    "Misconceptions": "Abstract classes and interfaces are interchangeable | Interfaces cannot have any concrete code",
+    "Follow_up": "From Java 8, what additions to interfaces reduce the need for abstract classes?"
+  },
+  {
+    "ID": "java_007",
+    "Topic": "Exception Handling",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Explain Exception Handling in Java. Differentiate Checked and Unchecked exceptions.",
+    "Expert_Answer": "Exceptions disrupt normal program flow [7]. Hierarchy: Throwable → Error (serious, unrecoverable) and Exception [7]. Checked exceptions: must be caught or declared (throws) [7]. Compile-time check [7]. Examples: IOException, SQLException [7]. Unchecked (RuntimeException): not required to be caught [7]. Examples: NullPointerException, ArrayIndexOutOfBoundsException [7]. try-catch-finally: try has risky code, catch handles, finally always executes [7]. throw: explicitly throw [7]. throws: declare [7].",
+    "Keywords": "exception, checked, unchecked, try-catch-finally, throw, throws, RuntimeException, IOException",
+    "Misconceptions": "Finally block does not execute if an exception occurs | All exceptions should be caught",
+    "Follow_up": "What is the difference between throw and throws? Give an example of each."
+  },
+  {
+    "ID": "java_008",
+    "Topic": "Exception Handling",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "How do you create a User-Defined Exception in Java? Give an example.",
+    "Expert_Answer": "User-defined exceptions extend Exception (checked) or RuntimeException (unchecked) [8]. Example: class InsufficientFundsException extends Exception { public InsufficientFundsException(String msg) { super(msg); } } [8]. Usage: if(balance < amount) throw new InsufficientFundsException(\"Insufficient balance\") [8]. Calling method: void withdraw(double amount) throws InsufficientFundsException [8]. Best practices: use checked for recoverable situations, unchecked for programming errors [8].",
+    "Keywords": "user-defined exception, custom exception, extends Exception, throws, throw, checked, RuntimeException",
+    "Misconceptions": "All custom exceptions must extend Exception directly | User-defined exceptions cannot have constructors",
+    "Follow_up": "When should a custom exception be checked vs unchecked?"
+  },
+  {
+    "ID": "java_009",
+    "Topic": "Collections",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Explain the Java Collections Framework. Compare ArrayList, Vector, LinkedList, HashMap, and HashSet.",
+    "Expert_Answer": "ArrayList: dynamic array, O(1) access, O(n) insert/delete middle, not thread-safe [9]. Vector: like ArrayList but synchronized (thread-safe), slower [9]. LinkedList: doubly linked list, O(n) access, O(1) insert/delete at known position, implements Deque [9]. HashMap: key-value, O(1) average, allows one null key, not thread-safe [9]. HashSet: unique elements backed by HashMap, O(1) operations [9]. TreeMap/TreeSet: sorted, O(log n) [9].",
+    "Keywords": "ArrayList, Vector, LinkedList, HashMap, HashSet, Collections, thread-safe, Iterator",
+    "Misconceptions": "HashMap allows duplicate keys | ArrayList is always faster than LinkedList",
+    "Follow_up": "How would you synchronize an ArrayList? What are the alternatives?"
+  },
+  {
+    "ID": "java_010",
+    "Topic": "Multithreading",
+    "Difficulty": "Hard",
+    "Type": "Conceptual",
+    "Question": "Explain the Thread Life Cycle in Java. How do you create threads?",
+    "Expert_Answer": "Thread Life Cycle: New → Runnable → Running → Blocked/Waiting/Timed-Waiting → Terminated [10]. Two creation methods: (1) Extend Thread class, override run(), call start() [10]. (2) Implement Runnable interface, pass to Thread constructor – preferred because it allows extending other classes [10]. Key methods: start() – creates new thread and calls run(), sleep(ms), join() – wait for thread to finish, yield(), interrupt() [10]. Priority: 1-10, default 5 [10].",
+    "Keywords": "thread lifecycle, Runnable, Thread class, start(), run(), sleep(), join(), thread priority",
+    "Misconceptions": "Calling run() directly creates a new thread | Higher priority threads always execute first",
+    "Follow_up": "What is the difference between wait() and sleep() in Java?"
+  },
+  {
+    "ID": "java_011",
+    "Topic": "Multithreading",
+    "Difficulty": "Hard",
+    "Type": "Conceptual",
+    "Question": "Explain synchronization in Java. What are synchronized methods and synchronized blocks?",
+    "Expert_Answer": "Synchronization prevents race conditions [11]. Synchronized method: only one thread executes on same object at a time using the intrinsic lock (monitor) [11]. Synchronized block: finer control – synchronized(this) { count++; } – can synchronize on any object [11]. Static synchronized: class-level lock [11]. Volatile: ensures visibility but not atomicity [11]. Java 5 java.util.concurrent: ReentrantLock, Semaphore, CountDownLatch – more flexible than synchronized [11].",
+    "Keywords": "synchronized, monitor, intrinsic lock, volatile, ReentrantLock, race condition, thread safety",
+    "Misconceptions": "Synchronized methods prevent all race conditions | Volatile ensures atomicity",
+    "Follow_up": "What is a deadlock in Java multithreading and how do you avoid it?"
+  },
+  {
+    "ID": "java_012",
+    "Topic": "File Handling",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Explain Java I/O streams. Differentiate between Byte Streams and Character Streams.",
+    "Expert_Answer": "Byte Streams: read/write raw bytes [12]. Base classes: InputStream, OutputStream [12]. Examples: FileInputStream, FileOutputStream [12]. Used for binary files (images, audio) [12]. Character Streams: read/write Unicode characters [12]. Base classes: Reader, Writer [12]. Examples: FileReader, FileWriter, BufferedReader [12]. BufferedReader: readLine() method [12]. For user input: Scanner (parsing), BufferedReader (speed) [12]. Object streams: serialize/deserialize objects [12].",
+    "Keywords": "byte stream, character stream, InputStream, Reader, Writer, FileInputStream, BufferedReader, serialization",
+    "Misconceptions": "Byte streams only handle small files | Scanner and BufferedReader are interchangeable",
+    "Follow_up": "What is Java serialization? How do you make a class serializable?"
+  },
+  {
+    "ID": "java_013",
+    "Topic": "Strings",
+    "Difficulty": "Easy",
+    "Type": "Conceptual",
+    "Question": "Explain the differences between String, StringBuilder, and StringBuffer in Java.",
+    "Expert_Answer": "String: immutable – each modification creates a new object [13]. String pool caches literals [13]. '+' in loops is inefficient O(n²) [13]. StringBuilder: mutable, not thread-safe [13]. Efficient for single-thread manipulation [13]. Methods: append(), insert(), delete(), reverse() [13]. StringBuffer: mutable, thread-safe (synchronized) [13]. Slower than StringBuilder [13]. Use StringBuilder for single-threaded, StringBuffer for multi-threaded [13]. Performance: StringBuilder O(n) vs String concatenation in loop O(n²) [13].",
+    "Keywords": "String, StringBuilder, StringBuffer, immutable, mutable, thread-safe, string pool, append()",
+    "Misconceptions": "String is mutable in Java | StringBuffer is always preferred over StringBuilder",
+    "Follow_up": "Why is String immutable in Java? What are the advantages?"
+  },
+  {
+    "ID": "java_014",
+    "Topic": "JVM",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Explain the JVM architecture and how Java achieves platform independence.",
+    "Expert_Answer": "Java source (.java) compiled to bytecode (.class) by javac [14]. Bytecode is intermediate – not machine code [14]. JVM interprets/JIT-compiles bytecode for the specific OS/hardware – Write Once, Run Anywhere [14]. JVM components: (1) Class Loader, (2) Bytecode Verifier, (3) Execution Engine (Interpreter + JIT Compiler that optimizes hot code), (4) Runtime Data Areas – Method Area, Heap (objects), Stack (frames), PC Register [14]. GC automatically manages heap memory [14].",
+    "Keywords": "JVM, bytecode, JIT compiler, class loader, heap, stack, garbage collection, platform independence",
+    "Misconceptions": "JVM is the same on all platforms | Java source code is compiled to machine code",
+    "Follow_up": "What is JIT compilation and how does it improve Java performance?"
+  },
+  {
+    "ID": "java_015",
+    "Topic": "Collections",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Explain Generics in Java. What problem do they solve?",
+    "Expert_Answer": "Generics allow defining classes, interfaces, and methods with type parameters [15]. Example: List<String> list = new ArrayList<>() [15]. Problem solved: without generics, collections store Object – requires explicit casting and can cause ClassCastException at runtime [15]. Generics provide compile-time type safety [15]. Bounded type: <T extends Number> [15]. Wildcards: <?> unbounded, <? extends T> upper, <? super T> lower [15]. Type erasure: generic info removed at compile time for backward compatibility [15].",
+    "Keywords": "generics, type parameter, type safety, bounded type, wildcard, type erasure, ClassCastException",
+    "Misconceptions": "Generics work at runtime | List<Object> is a supertype of List<String>",
+    "Follow_up": "What is type erasure and how does it affect generic programming in Java?"
+  },
+  {
+    "ID": "java_016",
+    "Topic": "JDBC",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "Explain JDBC connectivity in Java. What are the steps to connect to a database?",
+    "Expert_Answer": "JDBC provides API to connect Java programs to relational databases [16]. Steps: (1) Load driver – Class.forName() (modern drivers auto-register), (2) Get connection – DriverManager.getConnection(url, user, password), (3) Create statement – Statement or PreparedStatement for parameterized queries, (4) Execute – executeQuery() for SELECT, executeUpdate() for DML, (5) Process ResultSet, (6) Close resources using try-with-resources [16]. PreparedStatement prevents SQL injection and precompiles queries [16].",
+    "Keywords": "JDBC, Connection, PreparedStatement, ResultSet, DriverManager, SQL injection, executeQuery, executeUpdate",
+    "Misconceptions": "Statement is always preferred over PreparedStatement | JDBC connection stays open forever automatically",
+    "Follow_up": "How does PreparedStatement prevent SQL injection attacks?"
+  },
+  {
+    "ID": "java_017",
+    "Topic": "OOP Concepts",
+    "Difficulty": "Easy",
+    "Type": "Conceptual",
+    "Question": "Explain the access modifiers in Java: private, default, protected, and public.",
+    "Expert_Answer": "Private: accessible only within same class [17]. Not inherited [17]. Default (no modifier): accessible within same package only [17]. Protected: accessible within same package AND subclasses even in different packages [17]. Public: accessible from anywhere [17]. Best practice: fields private, access via public getter/setter [17]. A class can be public or default at the top level [17]. Inner class can access all outer class members including private [17].",
+    "Keywords": "private, protected, public, default, access modifier, encapsulation, package",
+    "Misconceptions": "Protected means private outside the class | Default and public access are the same",
+    "Follow_up": "Can a subclass in a different package access a protected method of its parent?"
+  },
+  {
+    "ID": "java_019",
+    "Topic": "OOP Concepts",
+    "Difficulty": "Easy",
+    "Type": "Conceptual",
+    "Question": "Explain the 'this' and 'super' keywords in Java with examples.",
+    "Expert_Answer": "'this' refers to the current object [18]. Uses: (1) Distinguish instance variable from local variable with same name: this.name = name, (2) Call another constructor in same class: this(param) – must be first statement, (3) Pass current object as argument, (4) Return current object for method chaining [18]. 'super' refers to parent class [18]. Uses: (1) Call parent constructor: super(params) – first statement, (2) Access overridden parent method: super.method(), (3) Access hidden parent variable [18].",
+    "Keywords": "this keyword, super keyword, constructor chaining, method overriding, instance variable, parent class",
+    "Misconceptions": "super() and this() can both be used as first statement | 'this' can be used in static context",
+    "Follow_up": "Can you use both this() and super() in the same constructor?"
+  },
+  {
+    "ID": "java_020",
+    "Topic": "OOP Concepts",
+    "Difficulty": "Medium",
+    "Type": "Conceptual",
+    "Question": "What is Java Garbage Collection? How does the JVM manage memory?",
+    "Expert_Answer": "GC automatically reclaims memory of objects no longer referenced [19]. JVM heap: Young Generation (Eden + Survivor spaces) and Old Generation [19]. New objects go to Eden, survive GC → Survivor, multiple survivals → Old Gen [19]. GC types: Minor GC (Young Gen), Full GC (Old Gen) [19]. Algorithms: Serial, Parallel, CMS, G1 (default Java 9+) [19]. WeakReference allows GC under certain conditions [19]. Memory leaks still possible when objects are referenced but unused [19].",
+    "Keywords": "garbage collection, heap, Young Generation, Old Generation, Eden, G1 GC, finalize, WeakReference",
+    "Misconceptions": "GC eliminates all memory leaks | finalize() is always called before object is deleted",
+    "Follow_up": "What causes StackOverflowError and OutOfMemoryError in Java?"
+  }
+]
