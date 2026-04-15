@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
-from app.routes import questions, evaluate
+from app.routes import questions, evaluate, speech, face
 import os
 
 load_dotenv()
@@ -22,6 +22,8 @@ app.add_middleware(
 
 app.include_router(evaluate.router, prefix="/evaluate", tags=["Evaluate"])
 app.include_router(questions.router, prefix="/questions", tags=["Questions"])
+app.include_router(speech.router, prefix="/speech", tags=["Speech"])
+app.include_router(face.router, prefix="/face", tags=["Face"])
 
 @app.get("/")
 def root():
