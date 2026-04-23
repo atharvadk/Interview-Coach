@@ -1,38 +1,41 @@
-'use client';
-import { useRef, useCallback, useEffect } from 'react';
-import { faceAPI } from '@/utils/api';
+"use client";
 
-export function useWebcamEmotion({ webcamRef, onEmotionUpdate, intervalMs = 2000 }) {
-  const intervalRef = useRef(null);
+import { useState, useEffect, useCallback } from 'react';
+import { mockApi } from '@/utils/api';
 
-  const captureAndAnalyze = useCallback(async () => {
-    if (!webcamRef?.current) return;
-    const screenshot = webcamRef.current.getScreenshot();
-    if (!screenshot) return;
+export function useWebcamEmotion(isRecording) {
+  const [currentEmotion, setCurrentEmotion] = useState({ emotion: 'Neutral', emoji: '😐', confidence: 100 });
+  const [emotionTimeline, setEmotionTimeline] = useState([]);
 
-    try {
-      const res  = await fetch(screenshot);
-      const blob = await res.blob();
-      const formData = new FormData();
-      formData.append('frame', blob, 'frame.jpg');
-      const { data } = await faceAPI.analyze(formData);
-      if (data.emotion && onEmotionUpdate) {
-        onEmotionUpdate(data);
+  useEffect(() => {
+    let interval;
+    if (isRecording) {
+      interval = setInterval(async () => {
+        try {
+          // Normally would extract a frame here and send arraybuffer to mockApi
+          const emotion = await mockApi.face.analyze();
+          setCurrentEmotion(emotion);
+          setEmotionTimeline(prev => [...prev, emotion.emoji]);
+        } catch (e) {
+          console.error("Emotion analysis mapping issue", e);
+        }
+      }, 2000);
+    } else {
+      if (currentEmotion.emotion !== 'Neutral') {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setCurrentEmotion({ emotion: 'Neutral', emoji: '😐', confidence: 100 });
       }
-    } catch (err) {
-      // Silently fail — face analysis is non-blocking
     }
-  }, [webcamRef, onEmotionUpdate]);
+    return () => clearInterval(interval);
+  }, [isRecording, currentEmotion.emotion]);
 
-  const startAnalysis = useCallback(() => {
-    intervalRef.current = setInterval(captureAndAnalyze, intervalMs);
-  }, [captureAndAnalyze, intervalMs]);
-
-  const stopAnalysis = useCallback(() => {
-    clearInterval(intervalRef.current);
+  const resetEmotionTimeline = useCallback(() => {
+    setEmotionTimeline([]);
   }, []);
 
-  useEffect(() => () => clearInterval(intervalRef.current), []);
-
-  return { startAnalysis, stopAnalysis };
+  return {
+    currentEmotion,
+    emotionTimeline,
+    resetEmotionTimeline
+  };
 }

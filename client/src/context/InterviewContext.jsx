@@ -1,86 +1,94 @@
-'use client';
-import { createContext, useContext, useState } from 'react';
+"use client";
 
-const InterviewContext = createContext(null);
+import React, { createContext, useState, useContext, useCallback, useMemo } from 'react';
 
-const initialState = {
-  sessionId:       null,
-  domain:          null,
-  difficulty:      null,
-  totalQuestions:  null,
-  currentQuestion: null,
-  questionNumber:  0,
-  transcriptChunks: [],
-  fullTranscript:  '',
-  isRecording:     false,
-  currentEmotion:  null,
-  emotionTimeline: [],
-  results:         [],
-  scores:          [],
-};
+const InterviewContext = createContext();
 
 export function InterviewProvider({ children }) {
-  const [state, setState] = useState(initialState);
+  const [session, setSession] = useState({
+    sessionId: null,
+    domain: null,
+    difficulty: null,
+    totalQuestions: 5
+  });
+  
+  const [questions, setQuestions] = useState([]);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  
+  const [results, setResults] = useState([]); // per-question evaluation results
+  const [emotionsTimeline, setEmotionsTimeline] = useState([]);
+  
+  const startSession = useCallback((details) => {
+    setSession({
+      sessionId: details.sessionId,
+      domain: details.domain,
+      difficulty: details.difficulty,
+      totalQuestions: details.totalQuestions
+    });
+    setQuestions([]);
+    setCurrentQuestionIndex(0);
+    setResults([]);
+    setEmotionsTimeline([]);
+  }, []);
 
-  const setSessionId      = (id) => setState(s => ({ ...s, sessionId: id }));
-  const setDomain         = (d)  => setState(s => ({ ...s, domain: d }));
-  const setDifficulty     = (d)  => setState(s => ({ ...s, difficulty: d }));
-  const setTotalQuestions = (n)  => setState(s => ({ ...s, totalQuestions: n }));
-  const setCurrentQuestion= (q)  => setState(s => ({ ...s, currentQuestion: q }));
-  const setQuestionNumber = (n)  => setState(s => ({ ...s, questionNumber: n }));
+  const saveEvaluation = useCallback((questionId, evaluation) => {
+    setResults(prev => [...prev, { questionId, ...evaluation }]);
+  }, []);
 
-  const addTranscriptChunk = (chunk) =>
-    setState(s => ({
-      ...s,
-      transcriptChunks: [...s.transcriptChunks, chunk],
-      fullTranscript:   [...s.transcriptChunks, chunk].join(' '),
-    }));
+  const nextQuestion = useCallback(() => {
+    let hasNext = false;
+    setCurrentQuestionIndex(prev => {
+      if (prev < session.totalQuestions - 1) {
+        hasNext = true;
+        return prev + 1;
+      }
+      return prev;
+    });
+    return hasNext;
+  }, [session.totalQuestions]);
 
-  const clearTranscript = () =>
-    setState(s => ({ ...s, transcriptChunks: [], fullTranscript: '' }));
+  const resetInterview = useCallback(() => {
+    setSession({
+      sessionId: null,
+      domain: null,
+      difficulty: null,
+      totalQuestions: 5
+    });
+    setQuestions([]);
+    setCurrentQuestionIndex(0);
+    setResults([]);
+    setEmotionsTimeline([]);
+  }, []);
 
-  const setIsRecording     = (v) => setState(s => ({ ...s, isRecording: v }));
-  const setCurrentEmotion  = (e) => setState(s => ({ ...s, currentEmotion: e }));
-
-  const addEmotionToTimeline = (e) =>
-    setState(s => ({ ...s, emotionTimeline: [...s.emotionTimeline, e] }));
-
-  const clearEmotionTimeline = () =>
-    setState(s => ({ ...s, emotionTimeline: [] }));
-
-  const addResult = (r)  => setState(s => ({ ...s, results: [...s.results, r] }));
-  const addScore  = (sc) => setState(s => ({ ...s, scores:  [...s.scores,  sc] }));
-
-  const resetInterview = () => setState(initialState);
+  const value = useMemo(() => ({
+    session, 
+    startSession,
+    questions, 
+    setQuestions,
+    currentQuestionIndex,
+    nextQuestion,
+    results,
+    saveEvaluation,
+    emotionsTimeline,
+    setEmotionsTimeline,
+    resetInterview
+  }), [
+    session, 
+    startSession, 
+    questions, 
+    currentQuestionIndex, 
+    nextQuestion, 
+    results, 
+    saveEvaluation, 
+    emotionsTimeline, 
+    resetInterview
+  ]);
 
   return (
-    <InterviewContext.Provider
-      value={{
-        ...state,
-        setSessionId,
-        setDomain,
-        setDifficulty,
-        setTotalQuestions,
-        setCurrentQuestion,
-        setQuestionNumber,
-        addTranscriptChunk,
-        clearTranscript,
-        setIsRecording,
-        setCurrentEmotion,
-        addEmotionToTimeline,
-        clearEmotionTimeline,
-        addResult,
-        addScore,
-        resetInterview,
-      }}
-    >
+    <InterviewContext.Provider value={value}>
       {children}
     </InterviewContext.Provider>
   );
 }
 
-export const useInterview = () => {
-  const ctx = useContext(InterviewContext);
-  if (!ctx) throw new Error('useInterview must be used inside InterviewProvider');
-  return ctx;
-};
+export const useInterview = () => useContext(InterviewContext);
