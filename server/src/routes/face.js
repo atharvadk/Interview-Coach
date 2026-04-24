@@ -10,21 +10,35 @@ const upload = multer({
 });
 
 
-router.post("/analyze", upload.single("frame"), async (req, res) => {
+// Handle both file upload and base64 image
+router.post("/analyze", async (req, res) => {
     try {
-        if (!req.file) {
+        const { image, session_id } = req.body;
+        
+        let imageBuffer;
+        let contentType = 'image/jpeg';
+        
+        if (image) {
+            // Handle base64 image from frontend
+            const base64Data = image.replace(/^data:image\/\w+;base64,/, '');
+            imageBuffer = Buffer.from(base64Data, 'base64');
+        } else if (req.file) {
+            // Handle file upload
+            imageBuffer = req.file.buffer;
+            contentType = req.file.mimetype;
+        } else {
             return res.status(400).json({ error: "No image provided" });
         }
 
-        const session    = req.session.interviewSession;
-        const session_id = req.body.session_id || session?.sessionId;
+        const session    = req.session?.interviewSession;
+        const currentSessionId = req.body.session_id || session?.sessionId;
 
         const form = new FormData();
-        form.append("frame",      req.file.buffer, {
+        form.append("frame", imageBuffer, {
             filename:    "frame.jpg",
-            contentType: req.file.mimetype
+            contentType: contentType
         });
-        form.append("session_id", session_id);
+        form.append("session_id", currentSessionId);
 
         const response = await axios.post(
             `${process.env.FASTAPI_URL}/face/analyze`,

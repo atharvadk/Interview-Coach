@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { mockApi } from '../utils/api';
+import { authApi } from '../utils/api';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 
@@ -22,7 +22,7 @@ export function AuthProvider({ children }) {
         setToken(storedToken);
       }
       // Fetch user profile
-      mockApi.auth.getMe().then(userData => {
+      authApi.getMe().then(userData => {
         setUser(userData);
         if (loading) {
           setLoading(false);
@@ -41,28 +41,28 @@ export function AuthProvider({ children }) {
 
   const login = async (email, password) => {
     try {
-      const res = await mockApi.auth.login({ email, password });
+      const res = await authApi.login({ email, password });
       setToken(res.token);
       setUser(res.user);
       localStorage.setItem('token', res.token);
       toast.success('Login successful!');
       router.push('/dashboard');
     } catch (err) {
-      toast.error(err.message || 'Login failed');
+      toast.error(err.response?.data?.message || 'Login failed');
       throw err;
     }
   };
 
   const register = async (name, email, password) => {
     try {
-      const res = await mockApi.auth.register({ name, email, password });
+      const res = await authApi.register({ name, email, password });
       setToken(res.token);
       setUser(res.user);
       localStorage.setItem('token', res.token);
       toast.success('Registration successful!');
       router.push('/dashboard');
     } catch (err) {
-      toast.error('Registration failed');
+      toast.error(err.response?.data?.message || 'Registration failed');
       throw err;
     }
   };

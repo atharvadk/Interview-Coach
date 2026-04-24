@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from 'react';
-import { mockApi } from '@/utils/api';
+import { speechApi } from '@/utils/api';
 
 export function useAudioRecorder() {
   const [isRecording, setIsRecording] = useState(false);
@@ -33,13 +33,20 @@ export function useAudioRecorder() {
     setTranscript("");
     chunksRef.current = [];
     
-    // Simulate speech-to-text chunking
+    // Start recording audio chunks and transcribe
     timerRef.current = setInterval(async () => {
        try {
-         const newText = await mockApi.speech.transcribe("chunk");
-         setTranscript(prev => prev + newText);
+         // Get audio chunks from mediaRecorder if available
+         if (mediaRecorderRef.current && chunksRef.current.length > 0) {
+           // Create a blob from chunks
+           const audioBlob = new Blob(chunksRef.current, { type: 'audio/webm' });
+           const result = await speechApi.transcribe(audioBlob);
+           if (result.text) {
+             setTranscript(prev => prev + " " + result.text);
+           }
+         }
        } catch (e) {
-         console.error("Transcription error", e);
+         console.error("Transcription error:", e);
        }
     }, 3000); 
   }, []);
@@ -57,6 +64,8 @@ export function useAudioRecorder() {
     isRecording,
     transcript,
     startRecording,
-    stopRecording
+    stopRecording,
+    mediaRecorderRef,
+    chunksRef
   };
 }

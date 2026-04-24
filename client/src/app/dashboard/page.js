@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/context/AuthContext";
-import { mockApi } from "@/utils/api";
+import { sessionApi } from "@/utils/api";
 import Link from "next/link";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { PlayCircle, TrendingUp, Trophy, Target, ArrowRight } from "lucide-react";
@@ -19,14 +19,11 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [statsData, sessionsData, chart] = await Promise.all([
-          mockApi.users.getStats(),
-          mockApi.users.getSessions(),
-          mockApi.users.getChartData()
-        ]);
-        setStats(statsData);
-        setSessions(sessionsData);
-        setChartData(chart);
+        // For now, we'll use mock data for stats and sessions
+        // TODO: Create backend endpoints for user stats and session history
+        setStats({ total: 0, avgScore: 0, bestDomain: "N/A" });
+        setSessions([]);
+        setChartData([]);
       } finally {
         setLoading(false);
       }

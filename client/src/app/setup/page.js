@@ -4,7 +4,7 @@ import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useInterview } from "@/context/InterviewContext";
-import { mockApi } from "@/utils/api";
+import { sessionApi, questionsApi } from "@/utils/api";
 import { useRouter } from "next/navigation";
 import { Loader2, ArrowRight, Upload } from "lucide-react";
 
@@ -30,8 +30,11 @@ export default function Setup() {
     if (!domain) return;
     setIsSubmitting(true);
     try {
-      const res = await mockApi.session.start({ domain, difficulty, totalQuestions: questionsCount });
-      startSession(res);
+      // Start session
+      const res = await sessionApi.start({ domain, difficulty, totalQuestions: questionsCount });
+      // Generate questions
+      const questions = await questionsApi.generate(domain, difficulty, questionsCount);
+      startSession({ ...res, domain, difficulty, totalQuestions: questionsCount, questions });
       router.push("/interview");
     } catch {
       setIsSubmitting(false);

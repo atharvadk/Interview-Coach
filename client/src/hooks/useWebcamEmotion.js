@@ -1,23 +1,43 @@
 "use client";
 
-import { useState, useEffect, useCallback } from 'react';
-import { mockApi } from '@/utils/api';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { faceApi } from '@/utils/api';
 
-export function useWebcamEmotion(isRecording) {
+export function useWebcamEmotion(isRecording, webcamRef) {
   const [currentEmotion, setCurrentEmotion] = useState({ emotion: 'Neutral', emoji: '😐', confidence: 100 });
   const [emotionTimeline, setEmotionTimeline] = useState([]);
+  const canvasRef = useRef(null);
+
+  const captureFrame = useCallback(async () => {
+    if (webcamRef && webcamRef.current) {
+      const video = webcamRef.current.video;
+      if (video && video.readyState === 4) {
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0);
+        
+        // Convert to base64
+        return canvas.toDataURL('image/jpeg', 0.5);
+      }
+    }
+    return null;
+  }, [webcamRef]);
 
   useEffect(() => {
     let interval;
     if (isRecording) {
       interval = setInterval(async () => {
         try {
-          // Normally would extract a frame here and send arraybuffer to mockApi
-          const emotion = await mockApi.face.analyze();
-          setCurrentEmotion(emotion);
-          setEmotionTimeline(prev => [...prev, emotion.emoji]);
+          const imageData = await captureFrame();
+          if (imageData) {
+            const emotion = await faceApi.analyze(imageData);
+            setCurrentEmotion(emotion);
+            setEmotionTimeline(prev => [...prev, emotion.emoji || emotion.emotion]);
+          }
         } catch (e) {
-          console.error("Emotion analysis mapping issue", e);
+          console.error("Emotion analysis error:", e);
         }
       }, 2000);
     } else {
@@ -27,7 +47,7 @@ export function useWebcamEmotion(isRecording) {
       }
     }
     return () => clearInterval(interval);
-  }, [isRecording, currentEmotion.emotion]);
+  }, [isRecording, currentEmotion.emotion, captureFrame]);
 
   const resetEmotionTimeline = useCallback(() => {
     setEmotionTimeline([]);

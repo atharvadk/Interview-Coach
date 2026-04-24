@@ -6,7 +6,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import { useInterview } from "@/context/InterviewContext";
 import { useWebcamEmotion } from "@/hooks/useWebcamEmotion";
 import { useAudioRecorder } from "@/hooks/useAudioRecorder";
-import { mockApi } from "@/utils/api";
+import { evaluateApi, questionsApi } from "@/utils/api";
 import { useRouter } from "next/navigation";
 import { QuestionCard } from "@/components/QuestionCard";
 import { WebcamFeed } from "@/components/WebcamFeed";
@@ -38,7 +38,7 @@ export default function Interview() {
     if (questions.length === 0) {
       const load = async () => {
         try {
-          const fetched = await mockApi.questions.generate(session.domain, session.difficulty, session.totalQuestions);
+          const fetched = await questionsApi.generate(session.domain, session.difficulty, session.totalQuestions);
           setQuestions(fetched);
         } finally {
           setLoadingQuestion(false);
@@ -55,7 +55,7 @@ export default function Interview() {
     const finalTranscript = stopRecording();
     setIsSubmitting(true);
     try {
-      const evaluation = await mockApi.evaluate(finalTranscript, questions[currentQuestionIndex]);
+      const evaluation = await evaluateApi.evaluate(finalTranscript, questions[currentQuestionIndex]);
       // Attach emotion timeline history to the evaluation record
       saveEvaluation(questions[currentQuestionIndex].id, { ...evaluation, emotionTimeline });
       setCurrentResult(evaluation);

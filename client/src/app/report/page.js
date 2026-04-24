@@ -3,7 +3,7 @@
 import { useEffect, useState, Suspense } from "react";
 import Navbar from "@/components/Navbar";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import { mockApi } from "@/utils/api";
+import { reportApi } from "@/utils/api";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
@@ -26,7 +26,7 @@ function ReportContent() {
     }
     const fetchReport = async () => {
       try {
-        const data = await mockApi.report.get(sessionId);
+        const data = await reportApi.get(sessionId);
         setReport(data);
       } catch (e) {
         console.error(e);
