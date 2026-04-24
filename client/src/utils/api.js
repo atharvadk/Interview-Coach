@@ -1,13 +1,13 @@
 import axios from 'axios';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
 // Create axios instance with default config
 const api = axios.create({
-  baseURL: API_URL,
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api',
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true,
 });
 
 // Add token to requests if available
@@ -57,7 +57,7 @@ export const authApi = {
 // Session API
 export const sessionApi = {
   start: async (data) => {
-    const response = await api.post('/session', data);
+    const response = await api.post('/session/start', data);
     return response.data;
   },
   
@@ -74,8 +74,10 @@ export const sessionApi = {
 
 // Questions API
 export const questionsApi = {
-  generate: async (domain, difficulty, count) => {
-    const response = await api.post('/questions/generate', { domain, difficulty, count });
+  generate: async (domain, difficulty, sessionId) => {
+    const response = await api.post('/questions/generate', { 
+      domain, difficulty, session_id: sessionId, previous_scores: [] 
+    });
     return response.data;
   },
 };

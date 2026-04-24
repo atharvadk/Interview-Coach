@@ -12,20 +12,17 @@ const PORT = process.env.PORT || 5000;
 const uploadDir = process.env.UPLOAD_DIR || "./uploads";
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
-// MongoDB connection
-const connectDB = require('./config/db');
+// ✅ CORS must be FIRST before anything else
+app.use(cors({
+  origin: "http://localhost:3000",
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "x-auth-token", "Authorization"]
+}));
 
-// Connect to MongoDB before starting the server
-connectDB().then(() => {
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
-}).catch((err) => {
-  console.error('Failed to connect to MongoDB:', err);
-  process.exit(1);
-});
+// ✅ Handle preflight requests explicitly
+app.options("*", cors());
 
-app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
@@ -42,6 +39,7 @@ app.use(rateLimit({
   max: 200
 }));
 
+// Routes
 const sessionRoutes  = require("./routes/session");
 const questionRoutes = require("./routes/questions");
 const speechRoutes   = require("./routes/speech");
@@ -60,7 +58,22 @@ app.use("/api/auth",      authRoutes);
 
 app.get("/health", (req, res) => res.json({ status: "ok" }));
 
+// Error handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: err.message });
 });
+
+// ✅ Connect DB then start server
+const connectDB = require("./config/db");
+
+connectDB()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`✅ Server running on port ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error("Failed to connect to MongoDB:", err);
+    process.exit(1);
+  });
