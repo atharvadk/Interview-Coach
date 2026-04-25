@@ -1,8 +1,63 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, UploadFile, File
 from app.models.schemas import QuestionRequest, QuestionResponse, Difficulty
 from app.modules.question_gen.generator import generate_question
+from app.modules.question_gen.project_questions import extract_project_topics, generate_project_question
 import uuid
+import random
 
+router = APIRouter()
+
+# Track question number per session in memory
+session_counters = {}
+
+
+@router.post("/project-question")
+async def project_question(file: UploadFile = File(...)):
+    if file.content_type != "application/pdf":
+        raise HTTPException(status_code=400, detail="Only PDF files are allowed.")
+    try:
+        from PyPDF2 import PdfReader
+        reader = PdfReader(file.file)
+        text = "\n".join(page.extract_text() or "" for page in reader.pages)
+        # Extract project lines
+        projects = []
+        lines = text.splitlines()
+        in_projects = False
+        for line in lines:
+            if 'project' in line.lower():
+                in_projects = True
+            if in_projects:
+                projects.append(line.strip())
+                if line.strip() == '' and len(projects) > 2:
+                    break
+        topics = extract_project_topics(projects)
+        if not topics:
+            return {"question": "No project topics found in resume."}
+        # Pick a random project topic and generate a question
+        question = generate_project_question(random.choice(topics))
+        return {"question": question, "project_topics": topics}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+        text = "\n".join(page.extract_text() or "" for page in reader.pages)
+        # Extract project lines
+        projects = []
+        lines = text.splitlines()
+        in_projects = False
+        for line in lines:
+            if 'project' in line.lower():
+                in_projects = True
+            if in_projects:
+                projects.append(line.strip())
+                if line.strip() == '' and len(projects) > 2:
+                    break
+        topics = extract_project_topics(projects)
+        if not topics:
+            return {"question": "No project topics found in resume."}
+        # Pick a random project topic and generate a question
+        question = generate_project_question(random.choice(topics))
+        return {"question": question, "project_topics": topics}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 router = APIRouter()
 
 # Track question number per session in memory

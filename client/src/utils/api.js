@@ -60,12 +60,20 @@ export const sessionApi = {
     const response = await api.post('/session/start', data);
     return response.data;
   },
-  
+
+  uploadResume: async (formData) => {
+    // You may need to adjust the endpoint to match your backend
+    const response = await api.post('/session/upload-resume', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response.data;
+  },
+
   getById: async (sessionId) => {
     const response = await api.get(`/session/${sessionId}`);
     return response.data;
   },
-  
+
   update: async (sessionId, data) => {
     const response = await api.put(`/session/${sessionId}`, data);
     return response.data;

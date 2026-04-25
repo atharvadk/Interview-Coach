@@ -1,6 +1,37 @@
 const express = require("express");
 const { v4: uuidv4 } = require("uuid");
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
 const router  = express.Router();
+
+// Multer setup for resume uploads
+const uploadDir = path.join(__dirname, "../../uploads");
+if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => cb(null, uploadDir),
+    filename: (req, file, cb) => {
+        const ext = path.extname(file.originalname);
+        const name = `${Date.now()}-${Math.round(Math.random()*1e9)}${ext}`;
+        cb(null, name);
+    }
+});
+const upload = multer({
+    storage,
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype === "application/pdf") cb(null, true);
+        else cb(new Error("Only PDF files are allowed"));
+    }
+});
+
+// POST /upload-resume
+router.post("/upload-resume", upload.single("resume"), (req, res) => {
+    if (!req.file) return res.status(400).json({ error: "No file uploaded" });
+    // Return file path or URL (adjust as needed for prod)
+    const fileUrl = `/uploads/${req.file.filename}`;
+    res.json({ resumeUrl: fileUrl });
+});
 
 // ✅ This must be "/start" not "/"
 router.post("/start", (req, res) => {

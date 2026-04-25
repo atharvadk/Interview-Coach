@@ -53,7 +53,7 @@ class EvaluationResponse(BaseModel):
     missing_keywords: List[str]
     misconceptions: List[str]
     feedback: str
-    model_answer: str
+    answer_model: str  # renamed from model_answer
     next_difficulty: Difficulty
 
 # Face

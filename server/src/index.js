@@ -12,6 +12,9 @@ const PORT = process.env.PORT || 5000;
 const uploadDir = process.env.UPLOAD_DIR || "./uploads";
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
+// Serve uploaded resumes statically
+app.use("/uploads", express.static(uploadDir));
+
 // ✅ CORS must be FIRST before anything else
 app.use(cors({
   origin: "http://localhost:3000",

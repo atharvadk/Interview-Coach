@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Navbar from "@/components/Navbar";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useInterview } from "@/context/InterviewContext";
@@ -15,6 +15,9 @@ export default function Setup() {
   const [difficulty, setDifficulty] = useState("Medium");
   const [questionsCount, setQuestionsCount] = useState(5);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [resume, setResume] = useState(null);
+  const [resumeName, setResumeName] = useState("");
+  const fileInputRef = useRef();
 
   const domains = [
     { id: "AI", label: "Artificial Intelligence" },
@@ -31,9 +34,21 @@ export default function Setup() {
     setIsSubmitting(true);
     try {
       // Start session
-      const res = await sessionApi.start({ domain, difficulty, totalQuestions: questionsCount });
-      // Generate questions
-      const questions = await questionsApi.generate(domain, difficulty, questionsCount);
+      let sessionPayload = { domain, difficulty, totalQuestions: questionsCount };
+      // If resume is present, upload it first
+      if (resume) {
+        const formData = new FormData();
+        formData.append('resume', resume);
+        // You may need to adjust the endpoint below to match your backend
+        const uploadRes = await sessionApi.uploadResume(formData);
+        if (uploadRes && uploadRes.resumeUrl) {
+          sessionPayload.resumeUrl = uploadRes.resumeUrl;
+        }
+      }
+      const res = await sessionApi.start(sessionPayload);
+      // Generate questions (pass sessionId from res)
+      const sessionId = res._id || res.id || res.sessionId;
+      const questions = await questionsApi.generate(domain, difficulty, sessionId);
       startSession({ ...res, domain, difficulty, totalQuestions: questionsCount, questions });
       router.push("/interview");
     } catch {
@@ -113,18 +128,36 @@ export default function Setup() {
               </div>
             </div>
 
-            {/* Resume Upload - Visual Only */}
+            {/* Resume Upload - Working */}
             <div className="glass-card p-6 rounded-2xl">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-lg font-semibold text-white">4. Upload Resume (Optional)</h2>
                 <span className="text-xs text-slate-500 bg-slate-800 px-2 py-1 rounded">Beta</span>
               </div>
-              <div className="border-2 border-dashed border-slate-700 rounded-xl p-8 flex flex-col items-center justify-center text-center hover:border-slate-500 transition-colors cursor-pointer bg-slate-800/20">
+              <input
+                type="file"
+                accept="application/pdf"
+                style={{ display: 'none' }}
+                ref={fileInputRef}
+                onChange={e => {
+                  if (e.target.files && e.target.files[0]) {
+                    setResume(e.target.files[0]);
+                    setResumeName(e.target.files[0].name);
+                  }
+                }}
+              />
+              <div
+                className="border-2 border-dashed border-slate-700 rounded-xl p-8 flex flex-col items-center justify-center text-center hover:border-slate-500 transition-colors cursor-pointer bg-slate-800/20"
+                onClick={() => fileInputRef.current && fileInputRef.current.click()}
+              >
                 <div className="bg-slate-800 p-4 rounded-full mb-4">
                   <Upload className="w-6 h-6 text-slate-400" />
                 </div>
                 <p className="text-slate-300 font-medium mb-1">Click to browse or drag & drop</p>
                 <p className="text-slate-500 text-sm">PDF formatting only, max 5MB</p>
+                {resumeName && (
+                  <span className="mt-2 text-green-400">Selected: {resumeName}</span>
+                )}
               </div>
             </div>
             
