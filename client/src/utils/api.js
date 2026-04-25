@@ -86,7 +86,8 @@ export const questionsApi = {
     const response = await api.post('/questions/generate', { 
       domain, difficulty, session_id: sessionId, previous_scores: [] 
     });
-    return response.data;
+    // FastAPI returns a single question object, wrap in array
+    return [response.data];
   },
 };
 

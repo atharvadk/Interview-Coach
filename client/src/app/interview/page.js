@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import Navbar from "@/components/Navbar";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useInterview } from "@/context/InterviewContext";
@@ -15,49 +15,63 @@ import { ScoreCard } from "@/components/ScoreCard";
 import { Loader2 } from "lucide-react";
 
 export default function Interview() {
+  const webcamRef = useRef(null);
   const router = useRouter();
   const { session, questions, setQuestions, currentQuestionIndex, nextQuestion, saveEvaluation } = useInterview();
   const [loadingQuestion, setLoadingQuestion] = useState(true);
   
   // Custom hooks
   const { isRecording, transcript, startRecording, stopRecording } = useAudioRecorder();
-  const { currentEmotion, emotionTimeline, resetEmotionTimeline } = useWebcamEmotion(isRecording);
+  const { currentEmotion, emotionTimeline, resetEmotionTimeline } = useWebcamEmotion(isRecording, webcamRef);
 
   // Local state
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentResult, setCurrentResult] = useState(null);
+  
 
   useEffect(() => {
-    // If user accesses /interview without establishing session
-    if (!session.sessionId) {
-      router.push("/setup");
-      return;
-    }
+      if (!session.sessionId) {
+        router.push("/setup");
+        return;
+      }
 
-    // Load questions if not loaded
-    if (questions.length === 0) {
-      const load = async () => {
-        try {
-          const fetched = await questionsApi.generate(session.domain, session.difficulty, session.totalQuestions);
-          setQuestions(fetched);
-        } finally {
-          setLoadingQuestion(false);
-        }
-      };
-      load();
-    } else if (loadingQuestion) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setLoadingQuestion(false);
-    }
-  }, [session, router, questions, setQuestions, loadingQuestion]);
+      if (questions.length === 0 && loadingQuestion) {
+        const load = async () => {
+          try {
+            const allQuestions = [];
+            for (let i = 0; i < session.totalQuestions; i++) {
+              const q = await questionsApi.generate(
+                session.domain,
+                session.difficulty,
+                session.sessionId
+              );
+              allQuestions.push(...q);
+            }
+            setQuestions(allQuestions);
+          } catch (e) {
+            console.error("Failed to load questions:", e);
+          } finally {
+            setLoadingQuestion(false);
+          }
+        };
+        load();
+      }
+    }, [session.sessionId]); // only run once when sessionId is available
 
   const handleSubmitAnswer = useCallback(async () => {
-    const finalTranscript = stopRecording();
+    const finalTranscript = await stopRecording(); // add await
+    if (!finalTranscript) return;
+    
     setIsSubmitting(true);
     try {
-      const evaluation = await evaluateApi.evaluate(finalTranscript, questions[currentQuestionIndex]);
-      // Attach emotion timeline history to the evaluation record
-      saveEvaluation(questions[currentQuestionIndex].id, { ...evaluation, emotionTimeline });
+      const evaluation = await evaluateApi.evaluate(
+        finalTranscript, 
+        questions[currentQuestionIndex]
+      );
+      saveEvaluation(questions[currentQuestionIndex].id, { 
+        ...evaluation, 
+        emotionTimeline 
+      });
       setCurrentResult(evaluation);
     } catch (e) {
       console.error(e);
@@ -116,7 +130,7 @@ export default function Interview() {
              {/* Right Column */}
              <div className="flex flex-col gap-6 min-h-0">
                <div className="flex-none">
-                 <WebcamFeed currentEmotion={currentEmotion} />
+                 <WebcamFeed currentEmotion={currentEmotion} webcamRef={webcamRef} />
                </div>
                
                <div className="flex-1 min-h-0">

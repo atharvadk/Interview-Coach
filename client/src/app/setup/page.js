@@ -12,7 +12,7 @@ export default function Setup() {
   const router = useRouter();
   const { startSession } = useInterview();
   const [domain, setDomain] = useState("");
-  const [difficulty, setDifficulty] = useState("Medium");
+  const [difficulty, setDifficulty] = useState("medium");
   const [questionsCount, setQuestionsCount] = useState(5);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [resume, setResume] = useState(null);
@@ -20,13 +20,13 @@ export default function Setup() {
   const fileInputRef = useRef();
 
   const domains = [
-    { id: "AI", label: "Artificial Intelligence" },
-    { id: "ML", label: "Machine Learning" },
-    { id: "DSA", label: "Data Structures & Algorithms" },
-    { id: "OS", label: "Operating Systems" },
-    { id: "Java", label: "Java Programming" },
-    { id: "FS", label: "Full Stack Web" },
-    { id: "HR", label: "HR & Behavioral" },
+    { id: "ai", label: "Artificial Intelligence" },
+    { id: "ml", label: "Machine Learning" },
+    { id: "dsa", label: "Data Structures & Algorithms" },
+    { id: "os", label: "Operating Systems" },
+    { id: "java", label: "Java Programming" },
+    { id: "fullstack", label: "Full Stack Web" },
+    { id: "hr", label: "HR & Behavioral" },
   ];
 
   const handleStart = async () => {
@@ -46,8 +46,7 @@ export default function Setup() {
         }
       }
       const res = await sessionApi.start(sessionPayload);
-      // Generate questions (pass sessionId from res)
-      const sessionId = res._id || res.id || res.sessionId;
+      const sessionId = res.sessionId;
       const questions = await questionsApi.generate(domain, difficulty, sessionId);
       startSession({ ...res, domain, difficulty, totalQuestions: questionsCount, questions });
       router.push("/interview");
@@ -92,7 +91,7 @@ export default function Setup() {
             <div className="glass-card p-6 rounded-2xl">
               <h2 className="text-lg font-semibold text-white mb-4">2. Select Difficulty</h2>
               <div className="flex gap-4">
-                {["Easy", "Medium", "Hard"].map(diff => (
+                {["easy", "medium", "hard"].map(diff => (
                   <button
                     key={diff}
                     onClick={() => setDifficulty(diff)}
@@ -102,7 +101,7 @@ export default function Setup() {
                       : "bg-slate-800/50 border-slate-700 text-slate-300 hover:bg-slate-800"
                     }`}
                   >
-                    {diff}
+                    {diff.charAt(0).toUpperCase() + diff.slice(1)}
                   </button>
                 ))}
               </div>
@@ -131,8 +130,7 @@ export default function Setup() {
             {/* Resume Upload - Working */}
             <div className="glass-card p-6 rounded-2xl">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg font-semibold text-white">4. Upload Resume (Optional)</h2>
-                <span className="text-xs text-slate-500 bg-slate-800 px-2 py-1 rounded">Beta</span>
+                <h2 className="text-lg font-semibold text-white">4. Upload Resume</h2>
               </div>
               <input
                 type="file"

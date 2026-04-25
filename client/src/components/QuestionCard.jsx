@@ -19,7 +19,7 @@ export function QuestionCard({ question, current, total, domain, difficulty }) {
       
       <div className="flex-1 flex items-center justify-center py-8">
         <h2 className="text-2xl sm:text-3xl font-bold text-white leading-relaxed text-center">
-          {question?.text || "Loading question..."}
+          {question?.question || "Loading question..."}
         </h2>
       </div>
     </motion.div>

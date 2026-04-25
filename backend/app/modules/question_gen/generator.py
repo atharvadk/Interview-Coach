@@ -1,16 +1,17 @@
 import os
 import random
-import requests
 from dotenv import load_dotenv
 
 load_dotenv()
 
-HF_API_TOKEN = os.getenv("HF_API_TOKEN")
-MODEL_URL    = "https://api-inference.huggingface.co/models/google/flan-t5-large"
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+import torch
 
-HEADERS = {
-    "Authorization": f"Bearer {HF_API_TOKEN}"
-}
+print("Loading question generation model...")
+_tokenizer = AutoTokenizer.from_pretrained("google/flan-t5-large")
+_model     = AutoModelForSeq2SeqLM.from_pretrained("google/flan-t5-large")
+_model.eval()
+print("✅ Question generation model loaded")
 
 # ── Domain Topics ─────────────────────────────────────────────────────────────
 DOMAIN_TOPICS = {
@@ -39,6 +40,11 @@ DOMAIN_TOPICS = {
         "medium": ["interfaces vs abstract classes", "generics", "multithreading basics", "JVM internals"],
         "hard":   ["design patterns", "concurrency utilities", "garbage collection", "Java memory model"]
     },
+    "fullstack": {
+        "easy":   ["HTML semantics", "CSS box model", "basic JavaScript", "DOM basics", "REST basics"],
+        "medium": ["React hooks", "state management", "async JavaScript", "REST API calls", "database design", "JWT auth"],
+        "hard":   ["React performance optimization", "microservices", "distributed systems", "database optimization", "system design"]
+    },
     "frontend": {
         "easy":   ["HTML semantics", "CSS box model", "basic JavaScript", "DOM basics"],
         "medium": ["React hooks", "state management", "async JavaScript", "REST API calls", "responsive design"],
@@ -65,42 +71,47 @@ QUESTION_TYPES = {
 
 # ── Fallback Questions ────────────────────────────────────────────────────────
 FALLBACKS = {
-    "ai":       {
+    "ai": {
         "easy":   "What is the difference between a BFS and DFS search algorithm?",
         "medium": "Explain how a constraint satisfaction problem works with an example.",
         "hard":   "What are the key tradeoffs between model-based and model-free reinforcement learning?"
     },
-    "ml":       {
+    "ml": {
         "easy":   "What is overfitting and how do you detect it?",
         "medium": "Explain the difference between L1 and L2 regularization.",
         "hard":   "What are the tradeoffs between bias and variance in model design?"
     },
-    "dsa":      {
+    "dsa": {
         "easy":   "What is the difference between a stack and a queue?",
         "medium": "How does a hash map handle collisions internally?",
         "hard":   "How would you design a rate limiter using DSA concepts?"
     },
-    "os":       {
+    "os": {
         "easy":   "What is the difference between a process and a thread?",
         "medium": "What are the four necessary conditions for a deadlock to occur?",
         "hard":   "Explain the working of the LRU page replacement algorithm."
     },
-    "java":     {
+    "java": {
         "easy":   "What is the difference between an abstract class and an interface?",
         "medium": "How does the Java garbage collector work?",
         "hard":   "Explain the Java memory model and how it handles thread visibility."
+    },
+    "fullstack": {
+        "easy":   "What is the difference between GET and POST HTTP methods?",
+        "medium": "How does JWT authentication work in a full stack application?",
+        "hard":   "How would you design a scalable full stack application with a React frontend and Node.js backend?"
     },
     "frontend": {
         "easy":   "What is the difference between inline and block elements in HTML?",
         "medium": "Explain the difference between useEffect and useLayoutEffect in React.",
         "hard":   "How would you optimize a React app that is rendering too slowly?"
     },
-    "backend":  {
+    "backend": {
         "easy":   "What is the difference between GET and POST HTTP methods?",
         "medium": "How does JWT authentication work in a REST API?",
         "hard":   "How would you design a rate limiting system for a high traffic API?"
     },
-    "hr":       {
+    "hr": {
         "easy":   "Tell me about yourself and your background.",
         "medium": "Describe a time you had a conflict with a teammate and how you resolved it.",
         "hard":   "Tell me about a time you had to make a difficult decision with incomplete information."
@@ -166,8 +177,11 @@ def build_prompt(domain: str, difficulty: str, topic: str) -> str:
             f"Return ONLY the question. No explanation. No numbering."
         )
 
+    # Map fullstack to a friendly display name in the prompt
+    display_domain = "full stack" if domain == "fullstack" else domain
+
     return (
-        f"You are a senior {domain} engineer conducting a technical interview.\n"
+        f"You are a senior {display_domain} engineer conducting a technical interview.\n"
         f"Generate ONE {difficulty} level interview question about {topic}.\n"
         f"Question style: {q_type}\n\n"
         f"Difficulty guidelines:\n"
@@ -217,27 +231,17 @@ def generate_question(domain: str, difficulty: str, session_id: str) -> str:
     topic  = pick_topic(session_id, domain, difficulty)
     prompt = build_prompt(domain, difficulty, topic)
 
-    payload = {
-        "inputs": prompt,
-        "parameters": {
-            "max_new_tokens":     120,
-            "temperature":        0.8,
-            "do_sample":          True,
-            "repetition_penalty": 1.3
-        }
-    }
-
     try:
-        response = requests.post(MODEL_URL, headers=HEADERS, json=payload, timeout=30)
-        response.raise_for_status()
-
-        data     = response.json()
-        question = data[0]["generated_text"].strip()
-
-        # Clean up any prefix the model adds
-        for prefix in ["Question:", "Q:", "Interview question:", "Answer:"]:
-            if question.lower().startswith(prefix.lower()):
-                question = question[len(prefix):].strip()
+        inputs   = _tokenizer(prompt, return_tensors="pt", truncation=True, max_length=512)
+        with torch.no_grad():
+            outputs = _model.generate(
+                **inputs,
+                max_new_tokens=120,
+                do_sample=True,
+                temperature=0.8,
+                repetition_penalty=1.3
+            )
+        question = _tokenizer.decode(outputs[0], skip_special_tokens=True).strip()
 
         # Validate quality
         if not question or len(question) < 15 or "?" not in question:

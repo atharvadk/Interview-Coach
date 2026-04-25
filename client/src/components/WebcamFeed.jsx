@@ -3,10 +3,11 @@
 import Webcam from "react-webcam";
 import { EmotionBadge } from "./EmotionBadge";
 
-export function WebcamFeed({ currentEmotion }) {
+export function WebcamFeed({ currentEmotion, webcamRef }) {
   return (
     <div className="relative rounded-2xl overflow-hidden bg-slate-900 border border-slate-700/50 aspect-video shadow-[0_0_40px_rgba(59,130,246,0.1)]">
       <Webcam
+        ref={webcamRef}
         className="w-full h-full object-cover"
         mirrored={true}
         audio={false}

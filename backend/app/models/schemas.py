@@ -11,6 +11,7 @@ class Domain(str, Enum):
     FRONTEND = "frontend"
     BACKEND = "backend"
     HR = "hr"
+    FULLSTACK = "fullstack"
 
 class Difficulty(str, Enum):
     EASY = "easy"
