@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional, List
 from enum import Enum
 
@@ -39,6 +39,8 @@ class TranscriptionResponse(BaseModel):
 
 # Evaluation
 class EvaluationRequest(BaseModel):
+    """What the frontend SENDS to the /evaluate endpoint."""
+    model_config = ConfigDict(protected_namespaces=())
     session_id: str
     question_id: str
     question: str
@@ -46,6 +48,8 @@ class EvaluationRequest(BaseModel):
     domain: Domain
 
 class EvaluationResponse(BaseModel):
+    """What the backend RETURNS after processing."""
+    model_config = ConfigDict(protected_namespaces=())
     question_id: str
     semantic_score: float
     keyword_score: float
@@ -54,7 +58,7 @@ class EvaluationResponse(BaseModel):
     missing_keywords: List[str]
     misconceptions: List[str]
     feedback: str
-    answer_model: str  # renamed from model_answer
+    answer_model: str
     next_difficulty: Difficulty
 
 # Face

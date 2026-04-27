@@ -9,6 +9,8 @@ router = APIRouter()
 
 @router.post("/", response_model=EvaluationResponse)
 def evaluate_answer(req: EvaluationRequest):
+    if not req.answer or len(req.answer.strip()) < 5:
+         raise HTTPException(status_code=400, detail="Answer is too short or empty.")
     try:
         # Step 1 — Run evaluation
         result = evaluate(
@@ -44,7 +46,7 @@ def evaluate_answer(req: EvaluationRequest):
             missing_keywords = result["missing_keywords"],
             misconceptions   = result["misconceptions"],
             feedback         = feedback,
-            model_answer     = result["expert_answer"],
+            answer_model     = result["expert_answer"],
             next_difficulty  = next_difficulty
         )
 

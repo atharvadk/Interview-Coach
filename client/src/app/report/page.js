@@ -63,12 +63,12 @@ function ReportContent() {
   }
 
   // Create chart data from question breakdown
-  const chartData = report.questionBreakdown.map((q, i) => ({
+  const chartData = report?.questionBreakdown.map((q, i) => ({
     name: `Q${i + 1}`,
     score: q.score,
     semantic: q.semantic,
     keywords: q.keywords
-  }));
+  })) || [];
 
   return (
         <main className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
