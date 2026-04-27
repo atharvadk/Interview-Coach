@@ -27,58 +27,78 @@ export default function Interview() {
   // Local state
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentResult, setCurrentResult] = useState(null);
+
+  useEffect(() => {
+    return () => {
+      stopRecording();
+      resetEmotionTimeline();
+    };
+  }, [stopRecording, resetEmotionTimeline]);
+
   
 
   useEffect(() => {
-      if (!session.sessionId) {
-        router.push("/setup");
+    if (!session.sessionId) {
+      router.push("/setup");
+      return;
+    }
+
+    if (questions.length === 0 && loadingQuestion) {
+      const load = async () => {
+        try {
+          const allQuestions = [];
+          for (let i = 0; i < session.totalQuestions; i++) {
+            const q = await questionsApi.generate(
+              session.domain,
+              session.difficulty,
+              session.sessionId
+            );
+            allQuestions.push(...q);
+          }
+          setQuestions(allQuestions);
+        } catch (e) {
+          console.error("Failed to load questions:", e);
+        } finally {
+          setLoadingQuestion(false);
+        }
+      };
+      load();
+    }
+  }, [session.sessionId, session.domain, session.difficulty, session.totalQuestions, questions.length, loadingQuestion, setQuestions]);
+
+  const handleStopAndSubmit = useCallback(async () => {
+    setIsSubmitting(true);
+    try {
+      const finalTranscript = await stopRecording();
+      
+      if (!finalTranscript || finalTranscript.trim() === "") {
+        alert("No speech detected. Please try again.");
+        setIsSubmitting(false);
         return;
       }
 
-      if (questions.length === 0 && loadingQuestion) {
-        const load = async () => {
-          try {
-            const allQuestions = [];
-            for (let i = 0; i < session.totalQuestions; i++) {
-              const q = await questionsApi.generate(
-                session.domain,
-                session.difficulty,
-                session.sessionId
-              );
-              allQuestions.push(...q);
-            }
-            setQuestions(allQuestions);
-          } catch (e) {
-            console.error("Failed to load questions:", e);
-          } finally {
-            setLoadingQuestion(false);
-          }
-        };
-        load();
-      }
-    }, [session.sessionId]); // only run once when sessionId is available
+      const currentQuestion = questions[currentQuestionIndex];
 
-  const handleSubmitAnswer = useCallback(async () => {
-    const finalTranscript = await stopRecording(); // add await
-    if (!finalTranscript) return;
-    
-    setIsSubmitting(true);
-    try {
       const evaluation = await evaluateApi.evaluate(
-        finalTranscript, 
-        questions[currentQuestionIndex]
+        finalTranscript,
+        currentQuestion,
+        session.sessionId,
+        session.domain
       );
-      saveEvaluation(questions[currentQuestionIndex].id, { 
-        ...evaluation, 
-        emotionTimeline 
-      });
+
+      saveEvaluation(
+        currentQuestion.question_id, 
+        { ...evaluation, emotionTimeline }
+      );
       setCurrentResult(evaluation);
+
     } catch (e) {
-      console.error(e);
+      console.error("Submit error:", e);
+      alert("Failed to evaluate answer. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
-  }, [stopRecording, questions, currentQuestionIndex, saveEvaluation, emotionTimeline]);
+  }, [stopRecording, questions, currentQuestionIndex, saveEvaluation, emotionTimeline, session]);
 
   const handleNext = useCallback(() => {
     setCurrentResult(null);
@@ -88,16 +108,6 @@ export default function Interview() {
       router.push(`/report?sessionId=${session.sessionId}`);
     }
   }, [resetEmotionTimeline, nextQuestion, router, session.sessionId]);
-
-  if (!session.sessionId || loadingQuestion) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
-      </div>
-    );
-  }
-
-  const question = questions[currentQuestionIndex];
 
   return (
     <ProtectedRoute>
@@ -114,41 +124,40 @@ export default function Interview() {
           </div>
 
           <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-0">
-             {/* Left Column */}
-             <div className="flex flex-col gap-6 min-h-0">
-               <div className="h-64 lg:h-auto lg:flex-1 min-h-0">
-                 <QuestionCard 
-                   question={question}
-                   current={currentQuestionIndex + 1}
-                   total={session.totalQuestions}
-                   domain={session.domain}
-                   difficulty={session.difficulty}
-                 />
-               </div>
-             </div>
+            {/* Left Column */}
+            <div className="flex flex-col gap-6 min-h-0">
+              <div className="h-64 lg:h-auto lg:flex-1 min-h-0">
+                <QuestionCard 
+                  question={questions[currentQuestionIndex]}
+                  current={currentQuestionIndex + 1}
+                  total={session.totalQuestions}
+                  domain={session.domain}
+                  difficulty={session.difficulty}
+                />
+              </div>
+            </div>
 
-             {/* Right Column */}
-             <div className="flex flex-col gap-6 min-h-0">
-               <div className="flex-none">
-                 <WebcamFeed currentEmotion={currentEmotion} webcamRef={webcamRef} />
-               </div>
-               
-               <div className="flex-1 min-h-0">
-                 <AnswerInput 
-                   isRecording={isRecording}
-                   transcript={transcript}
-                   onStartRecord={startRecording}
-                   onStopRecord={stopRecording}
-                   onSubmit={handleSubmitAnswer}
-                   isSubmitting={isSubmitting}
-                 />
-               </div>
-             </div>
+            {/* Right Column */}
+            <div className="flex flex-col gap-6 min-h-0">
+              <div className="flex-none">
+                <WebcamFeed currentEmotion={currentEmotion} webcamRef={webcamRef} />
+              </div>
+              
+              <div className="flex-1 min-h-0">
+                <AnswerInput 
+                  isRecording={isRecording}
+                  transcript={transcript}
+                  onStartRecord={startRecording}
+                  onStopAndSubmit={handleStopAndSubmit}
+                  isSubmitting={isSubmitting}
+                />
+              </div>
+            </div>
           </div>
         </main>
 
         {currentResult && (
-           <ScoreCard result={currentResult} onProvideNext={handleNext} />
+          <ScoreCard result={currentResult} onProvideNext={handleNext} />
         )}
       </div>
     </ProtectedRoute>

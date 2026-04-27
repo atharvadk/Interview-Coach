@@ -9,18 +9,33 @@ export function useAudioRecorder() {
   const mediaRecorderRef = useRef(null);
   const chunksRef = useRef([]);
   const streamRef = useRef(null);
+  const isMountedRef = useRef(true);
 
   // Cleanup on unmount
   useEffect(() => {
+    isMountedRef.current = true;
     return () => {
+      isMountedRef.current = false;
+      // Clean up media resources
       if (streamRef.current) {
         streamRef.current.getTracks().forEach(t => t.stop());
+        streamRef.current = null;
       }
+      if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+        mediaRecorderRef.current.stop();
+      }
+      mediaRecorderRef.current = null;
+      chunksRef.current = [];
     };
   }, []);
 
   const startRecording = useCallback(async () => {
     try {
+      // Clean up any existing stream first
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(t => t.stop());
+      }
+      
       // Request mic permission and get stream
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
@@ -61,7 +76,10 @@ export function useAudioRecorder() {
           // Send to backend for transcription
           const result = await speechApi.transcribe(audioBlob);
           const text = result.transcript || "";
-          setTranscript(text);
+          
+          if (isMountedRef.current) {
+            setTranscript(text);
+          }
           resolve(text);
         } catch (err) {
           console.error("Transcription error:", err);
@@ -70,8 +88,11 @@ export function useAudioRecorder() {
           // Stop all tracks
           if (streamRef.current) {
             streamRef.current.getTracks().forEach(t => t.stop());
+            streamRef.current = null;
           }
-          setIsRecording(false);
+          if (isMountedRef.current) {
+            setIsRecording(false);
+          }
         }
       };
 

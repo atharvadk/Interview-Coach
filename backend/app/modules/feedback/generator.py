@@ -1,15 +1,9 @@
 import os
-import requests
+from app.modules.models_loader import get_flan_t5_model, get_tokenizer
+import torch
 from dotenv import load_dotenv
 
 load_dotenv()
-
-HF_API_TOKEN = os.getenv("HF_API_TOKEN")
-MODEL_URL    = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.3"
-
-HEADERS = {
-    "Authorization": f"Bearer {HF_API_TOKEN}"
-}
 
 
 def build_feedback_prompt(
@@ -25,30 +19,19 @@ def build_feedback_prompt(
     missing_kw_str     = ", ".join(missing_keywords) if missing_keywords else "none"
     misconceptions_str = ", ".join(misconceptions)   if misconceptions   else "none"
 
-    return f"""<s>[INST]
-You are an expert technical interview coach giving feedback to a student.
+    return f"""You are an expert {domain} interview coach giving feedback to a student.
 
-Question asked: {question}
+Question: {question}
 
-Student's answer: {user_answer}
+Student answer: {user_answer}
 
 Expert answer: {expert_answer}
 
-Evaluation results:
-- Score: {composite_score}/10
-- Missing keywords: {missing_kw_str}
-- Misconceptions found: {misconceptions_str}
+Score: {composite_score}/10
+Missing keywords: {missing_kw_str}
+Misconceptions: {misconceptions_str}
 
-Give personalized feedback in 3-4 sentences:
-1. Start with what the student got right
-2. Point out what important concepts were missing
-3. Give one specific tip to improve the answer
-4. End with encouragement
-
-Keep it conversational, helpful, and specific to the {domain} domain.
-Do not repeat the question. Do not give the full answer away.
-Only return the feedback text, nothing else.
-[/INST]</s>"""
+Give helpful feedback in 3-4 sentences. Mention what was good, what was missing, and one improvement tip."""
 
 
 def generate_feedback(
@@ -71,27 +54,27 @@ def generate_feedback(
         domain           = domain
     )
 
-    payload = {
-        "inputs": prompt,
-        "parameters": {
-            "max_new_tokens":     200,
-            "temperature":        0.7,
-            "do_sample":          True,
-            "repetition_penalty": 1.2,
-            "return_full_text":   False    # only return generated part not the prompt
-        }
-    }
-
     try:
-        response = requests.post(MODEL_URL, headers=HEADERS, json=payload, timeout=60)
-        response.raise_for_status()
+        tokenizer = get_tokenizer()
+        model = get_flan_t5_model()
+        
+        inputs = tokenizer(
+            prompt,
+            return_tensors="pt",
+            truncation=True,
+            max_length=512
+        )
 
-        data     = response.json()
-        feedback = data[0]["generated_text"].strip()
+        with torch.no_grad():
+            outputs = model.generate(
+                **inputs,
+                max_new_tokens=200,
+                do_sample=True,
+                temperature=0.7,
+                repetition_penalty=1.2
+            )
 
-        # Clean up any leftover instruction tags
-        for tag in ["[INST]", "[/INST]", "<s>", "</s>"]:
-            feedback = feedback.replace(tag, "").strip()
+        feedback = tokenizer.decode(outputs[0], skip_special_tokens=True).strip()
 
         if not feedback or len(feedback) < 20:
             return fallback_feedback(composite_score, missing_keywords)
@@ -99,15 +82,11 @@ def generate_feedback(
         return feedback
 
     except Exception as e:
-        print(f"Feedback generation error: {e}")
+        print(f"Flan-T5 feedback error: {e}")
         return fallback_feedback(composite_score, missing_keywords)
 
 
 def fallback_feedback(composite_score: float, missing_keywords: list) -> str:
-    """
-    Used when Mistral API fails.
-    Returns a generic but useful feedback message.
-    """
     missing_str = ", ".join(missing_keywords[:3]) if missing_keywords else "some key concepts"
 
     if composite_score >= 8.0:

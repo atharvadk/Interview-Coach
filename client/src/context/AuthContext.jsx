@@ -14,30 +14,24 @@ export function AuthProvider({ children }) {
   const router = useRouter();
 
   useEffect(() => {
-    // Check local storage for token
     const storedToken = localStorage.getItem('token');
     if (storedToken) {
-      if (token !== storedToken) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setToken(storedToken);
-      }
-      // Fetch user profile
-      authApi.getMe().then(userData => {
-        setUser(userData);
-        if (loading) {
+      setToken(storedToken);
+      authApi.getMe()
+        .then(userData => {
+          setUser(userData);
+        })
+        .catch(() => {
+          setUser(null);
+          localStorage.removeItem('token');
+        })
+        .finally(() => {
           setLoading(false);
-        }
-      }).catch(() => {
-        if (loading) {
-          setLoading(false);
-        }
-      });
+        });
     } else {
-      if (loading) {
-        setLoading(false);
-      }
+      setLoading(false);
     }
-  }, [token, loading]);
+  }, []);
 
   const login = async (email, password) => {
     try {

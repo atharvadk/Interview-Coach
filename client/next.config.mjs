@@ -1,7 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  /* config options here */
-  reactCompiler: true,
+  // Disable React Compiler for stability (causes chunk loading issues)
+  reactCompiler: false,
+  
+  // Optimize package imports to reduce bundle size
+  experimental: {
+    optimizePackageImports: ['lucide-react', 'recharts'],
+  },
 };
 
 export default nextConfig;

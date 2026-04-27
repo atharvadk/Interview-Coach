@@ -1,3 +1,5 @@
+"use client";
+
 import axios from 'axios';
 
 
@@ -113,8 +115,14 @@ export const faceApi = {
 
 // Evaluate API
 export const evaluateApi = {
-  evaluate: async (transcript, question) => {
-    const response = await api.post('/evaluate', { transcript, question });
+  evaluate: async (transcript, questionObj, sessionId, domain) => {
+    const response = await api.post('/evaluate', { 
+      session_id:  sessionId,
+      question_id: questionObj.question_id,
+      question:    questionObj.question,
+      answer:      transcript,
+      domain:      domain
+    });
     return response.data;
   },
 };

@@ -4,14 +4,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+from app.modules.models_loader import get_flan_t5_model, get_tokenizer
 import torch
 
-print("Loading question generation model...")
-_tokenizer = AutoTokenizer.from_pretrained("google/flan-t5-large")
-_model     = AutoModelForSeq2SeqLM.from_pretrained("google/flan-t5-large")
-_model.eval()
-print("✅ Question generation model loaded")
 
 # ── Domain Topics ─────────────────────────────────────────────────────────────
 DOMAIN_TOPICS = {
@@ -232,16 +227,19 @@ def generate_question(domain: str, difficulty: str, session_id: str) -> str:
     prompt = build_prompt(domain, difficulty, topic)
 
     try:
-        inputs   = _tokenizer(prompt, return_tensors="pt", truncation=True, max_length=512)
+        tokenizer = get_tokenizer()
+        model = get_flan_t5_model()
+        
+        inputs   = tokenizer(prompt, return_tensors="pt", truncation=True, max_length=512)
         with torch.no_grad():
-            outputs = _model.generate(
+            outputs = model.generate(
                 **inputs,
                 max_new_tokens=120,
                 do_sample=True,
                 temperature=0.8,
                 repetition_penalty=1.3
             )
-        question = _tokenizer.decode(outputs[0], skip_special_tokens=True).strip()
+        question = tokenizer.decode(outputs[0], skip_special_tokens=True).strip()
 
         # Validate quality
         if not question or len(question) < 15 or "?" not in question:

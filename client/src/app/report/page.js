@@ -18,12 +18,10 @@ function ReportContent() {
 
   useEffect(() => {
     if (!sessionId) {
-      if (loading) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setLoading(false);
-      }
+      setLoading(false);
       return;
     }
+
     const fetchReport = async () => {
       try {
         const data = await reportApi.get(sessionId);
@@ -35,7 +33,7 @@ function ReportContent() {
       }
     };
     fetchReport();
-  }, [sessionId, loading]);
+  }, [sessionId]);
 
   const toggleQ = (id) => {
     setExpandedQs(prev => ({ ...prev, [id]: !prev[id] }));

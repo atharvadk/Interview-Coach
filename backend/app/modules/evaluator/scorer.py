@@ -1,15 +1,7 @@
 import language_tool_python
-from sentence_transformers import SentenceTransformer, util
+from sentence_transformers import util
 from app.knowledge_base.loader import get_expert_data
-
-# Load models once on startup
-print("Loading sentence transformer model...")
-similarity_model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
-
-print("Loading grammar tool...")
-grammar_tool = language_tool_python.LanguageTool("en-US")
-
-print("✅ Evaluator models loaded")
+from app.modules.models_loader import get_similarity_model, get_grammar_tool
 
 
 # ── Semantic Similarity ───────────────────────────────────────────────────────
@@ -21,8 +13,10 @@ def semantic_score(user_answer: str, expert_answer: str) -> float:
     if not user_answer or not expert_answer:
         return 0.0
 
-    user_embedding   = similarity_model.encode(user_answer,   convert_to_tensor=True)
-    expert_embedding = similarity_model.encode(expert_answer, convert_to_tensor=True)
+    model = get_similarity_model()
+    
+    user_embedding   = model.encode(user_answer,   convert_to_tensor=True)
+    expert_embedding = model.encode(expert_answer, convert_to_tensor=True)
 
     similarity = util.cos_sim(user_embedding, expert_embedding).item()
 
@@ -57,6 +51,7 @@ def grammar_score(user_answer: str) -> float:
     if not user_answer:
         return 0.0
 
+    grammar_tool = get_grammar_tool()
     matches    = grammar_tool.check(user_answer)
     errors     = len(matches)
     words      = len(user_answer.split())

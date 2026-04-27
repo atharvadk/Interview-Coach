@@ -1,53 +1,109 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { faceApi } from '@/utils/api';
+
+const EMOTION_MAP = {
+  happy:     { emoji: "😊", label: "Happy" },
+  neutral:   { emoji: "😐", label: "Neutral" },
+  surprised: { emoji: "😮", label: "Surprised" },
+  fearful:   { emoji: "😰", label: "Nervous" },
+  angry:     { emoji: "😠", label: "Stressed" },
+  disgusted: { emoji: "😟", label: "Uncomfortable" },
+  sad:       { emoji: "😔", label: "Low Confidence" },
+};
+
+// Limit timeline size to prevent memory leak
+const MAX_TIMELINE_SIZE = 100;
 
 export function useWebcamEmotion(isRecording, webcamRef) {
-  const [currentEmotion, setCurrentEmotion] = useState({ emotion: 'Neutral', emoji: '😐', confidence: 100 });
+  const [currentEmotion, setCurrentEmotion] = useState({ 
+    emotion: "Neutral", 
+    emoji: "😐", 
+    confidence: 100 
+  });
   const [emotionTimeline, setEmotionTimeline] = useState([]);
-  const canvasRef = useRef(null);
+  const intervalRef = useRef(null);
+  const isProcessingRef = useRef(false);
 
-  const captureFrame = useCallback(async () => {
-    if (webcamRef && webcamRef.current) {
-      const video = webcamRef.current.video;
-      if (video && video.readyState === 4) {
-        const canvas = document.createElement('canvas');
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(video, 0, 0);
-        
-        // Convert to base64
-        return canvas.toDataURL('image/jpeg', 0.5);
+  const captureAndAnalyze = useCallback(async () => {
+    // Prevent concurrent processing
+    if (isProcessingRef.current || !webcamRef?.current) return;
+    
+    try {
+      isProcessingRef.current = true;
+      const imageSrc = webcamRef.current.getScreenshot();
+      if (!imageSrc) {
+        isProcessingRef.current = false;
+        return;
       }
+
+      const token = typeof window !== 'undefined' 
+        ? localStorage.getItem('token') 
+        : null;
+
+      const response = await fetch('http://localhost:5000/api/face/analyze', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          ...(token && { 'x-auth-token': token })
+        },
+        body: JSON.stringify({ image: imageSrc })
+      });
+
+      if (!response.ok) {
+        isProcessingRef.current = false;
+        return;
+      }
+
+      const data = await response.json();
+      const dominant = data.dominant_emotion || "neutral";
+      const mapped = EMOTION_MAP[dominant.toLowerCase()] || { emoji: "😐", label: "Neutral" };
+      const score = data.emotion_scores?.[dominant] || 0;
+
+      setCurrentEmotion({
+        emotion: mapped.label,
+        emoji: mapped.emoji,
+        confidence: Math.round(score * 100)
+      });
+
+      setEmotionTimeline(prev => {
+        const newTimeline = [...prev, mapped.emoji];
+        // Limit array size to prevent memory leak
+        if (newTimeline.length > MAX_TIMELINE_SIZE) {
+          return newTimeline.slice(-MAX_TIMELINE_SIZE);
+        }
+        return newTimeline;
+      });
+
+    } catch (err) {
+      console.warn("Face analysis error:", err.message);
+    } finally {
+      isProcessingRef.current = false;
     }
-    return null;
   }, [webcamRef]);
 
   useEffect(() => {
-    let interval;
     if (isRecording) {
-      interval = setInterval(async () => {
-        try {
-          const imageData = await captureFrame();
-          if (imageData) {
-            const emotion = await faceApi.analyze(imageData);
-            setCurrentEmotion(emotion);
-            setEmotionTimeline(prev => [...prev, emotion.emoji || emotion.emotion]);
-          }
-        } catch (e) {
-          console.error("Emotion analysis error:", e);
-        }
-      }, 2000);
+      // Clear any existing interval first
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+      intervalRef.current = setInterval(captureAndAnalyze, 3000);
     } else {
-      if (currentEmotion.emotion !== 'Neutral') {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setCurrentEmotion({ emotion: 'Neutral', emoji: '😐', confidence: 100 });
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
       }
     }
-    return () => clearInterval(interval);
-  }, [isRecording, currentEmotion.emotion, captureFrame]);
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+      isProcessingRef.current = false;
+    };
+  }, [isRecording, captureAndAnalyze]);
 
   const resetEmotionTimeline = useCallback(() => {
     setEmotionTimeline([]);
