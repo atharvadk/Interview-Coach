@@ -25,18 +25,7 @@ export function ScoreCard({ result, onProvideNext }) {
           ? 'bg-blue-500/10 border-blue-500/20' 
           : 'bg-red-500/10 border-red-500/20'}`}
         >
-          <div className="flex items-center justify-between">Fix 3 — client/src/app/interview/page.js, also fix handleNext because ScoreCard result fields need to match. Find handleNext and check setCurrentResult — the evaluation response from FastAPI has these fields:
-pythonclass EvaluationResponse(BaseModel):
-    question_id: str
-    semantic_score: float
-    keyword_score: float
-    grammar_score: float
-    composite_score: float
-    missing_keywords: List[str]
-    misconceptions: List[str]
-    feedback: str
-    answer_model: str
-    next_difficulty: Difficulty
+          <div className="flex items-center justify-between">
             <div>
               <h3 className="text-2xl font-bold text-white mb-1">
                 Score: {score} <span className="text-slate-400 text-lg">/ 10</span>
