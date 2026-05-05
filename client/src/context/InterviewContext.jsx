@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useState, useContext, useCallback, useMemo } from 'react';
+import React, { createContext, useState, useContext, useCallback, useMemo, useRef } from 'react';
 
 const InterviewContext = createContext();
 
@@ -15,10 +15,16 @@ export function InterviewProvider({ children }) {
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   
-  const [results, setResults] = useState([]); // per-question evaluation results
+  const [results, setResults] = useState([]);
   const [emotionsTimeline, setEmotionsTimeline] = useState([]);
-  
+
+  // Ref to always have the latest totalQuestions without stale closure issues
+  const totalQuestionsRef = useRef(5);
+  // Ref to always have the latest questions length
+  const questionsLengthRef = useRef(0);
+
   const startSession = useCallback((details) => {
+    totalQuestionsRef.current = details.totalQuestions;
     setSession({
       sessionId: details.sessionId,
       domain: details.domain,
@@ -35,19 +41,38 @@ export function InterviewProvider({ children }) {
     setResults(prev => [...prev, { questionId, ...evaluation }]);
   }, []);
 
+  // Sync questionsLengthRef whenever questions changes
+  const setQuestionsWithRef = useCallback((questionsOrUpdater) => {
+    setQuestions(prev => {
+      const next = typeof questionsOrUpdater === 'function'
+        ? questionsOrUpdater(prev)
+        : questionsOrUpdater;
+      questionsLengthRef.current = next.length;
+      return next;
+    });
+  }, []);
+
   const nextQuestion = useCallback(() => {
+    // Use ref values so this never reads stale state
+    const total = totalQuestionsRef.current;
+    const qLength = questionsLengthRef.current;
+    // Use whichever limit is more reliable — loaded questions length takes priority
+    const limit = qLength > 0 ? qLength : total;
+
     let hasNext = false;
     setCurrentQuestionIndex(prev => {
-      if (prev < session.totalQuestions - 1) {
+      if (prev < limit - 1) {
         hasNext = true;
         return prev + 1;
       }
       return prev;
     });
     return hasNext;
-  }, [session.totalQuestions]);
+  }, []); // empty deps — reads from refs only, never goes stale
 
   const resetInterview = useCallback(() => {
+    totalQuestionsRef.current = 5;
+    questionsLengthRef.current = 0;
     setSession({
       sessionId: null,
       domain: null,
@@ -61,10 +86,10 @@ export function InterviewProvider({ children }) {
   }, []);
 
   const value = useMemo(() => ({
-    session, 
+    session,
     startSession,
-    questions, 
-    setQuestions,
+    questions,
+    setQuestions: setQuestionsWithRef,
     currentQuestionIndex,
     nextQuestion,
     results,
@@ -73,14 +98,15 @@ export function InterviewProvider({ children }) {
     setEmotionsTimeline,
     resetInterview
   }), [
-    session, 
-    startSession, 
-    questions, 
-    currentQuestionIndex, 
-    nextQuestion, 
-    results, 
-    saveEvaluation, 
-    emotionsTimeline, 
+    session,
+    startSession,
+    questions,
+    setQuestionsWithRef,
+    currentQuestionIndex,
+    nextQuestion,
+    results,
+    saveEvaluation,
+    emotionsTimeline,
     resetInterview
   ]);
 

@@ -80,6 +80,16 @@ export const sessionApi = {
     const response = await api.put(`/session/${sessionId}`, data);
     return response.data;
   },
+
+  getStats: async () => {
+    const response = await api.get("/session/stats");
+    return response.data;
+  },
+
+  getHistory: async () => {
+    const response = await api.get("/session/history");
+    return response.data;
+  },
 };
 
 // Questions API

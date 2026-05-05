@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const reportSchema = new mongoose.Schema({
   session_id: String,
   domain: String,
-  // Change this from questionBreakdown to questions if it isn't already
   questions: [{
     question_number: Number,
     question: String,
@@ -15,4 +14,5 @@ const reportSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
-module.exports = mongoose.model('Report', ReportSchema);
+// Was "ReportSchema" (undefined) — fixed to "reportSchema"
+module.exports = mongoose.model('Report', reportSchema);

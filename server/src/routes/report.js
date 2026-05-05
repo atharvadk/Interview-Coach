@@ -112,6 +112,40 @@ router.get("/:sessionId", async (req, res) => {
             session.domain
         );
 
+        // Save session to DB so dashboard can read it
+        try {
+        const authHeader = req.headers["x-auth-token"];
+        if (authHeader) {
+            const jwt = require("jsonwebtoken");
+            const User = require("../models/User");
+            const Session = require("../models/Session");
+
+            const decoded = jwt.verify(
+            authHeader,
+            process.env.JWT_SECRET || "your_jwt_secret"
+            );
+            const userId = decoded.user.id;
+
+            await Session.findOneAndUpdate(
+            { _id: session.sessionId },
+            {
+                user: userId,
+                endedAt: new Date(),
+                questions: results.map((r) => ({
+                question: r.question,
+                answer: r.user_answer,
+                score: r.composite_score,
+                feedback: r.feedback,
+                })),
+                faceAnalysis: { domain: session.domain },
+            },
+            { upsert: true, new: true }
+            );
+        }
+        } catch (dbErr) {
+        console.warn("Could not save session to DB:", dbErr.message);
+        }
+        
         // ── Final Response ────────────────────────────────────────────────────
         return res.json({
             sessionId:         session.sessionId,
