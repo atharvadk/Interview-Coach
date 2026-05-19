@@ -1,9 +1,9 @@
-import whisper
+from faster_whisper import WhisperModel
 import tempfile
 import os
 
 print("Loading Whisper model...")
-model = whisper.load_model("base")
+model = WhisperModel("base", device="cpu", compute_type="float32")
 print("✅ Whisper model loaded")
 
 
@@ -19,14 +19,22 @@ def transcribe(audio_bytes: bytes) -> dict:
         tmp_path = tmp.name
 
     try:
-        result = model.transcribe(tmp_path, language="en", fp16=False)
+        # 💡 FIX: faster-whisper returns a (segments, info) tuple
+        segments, info = model.transcribe(tmp_path, language="en")
 
-        transcript = result["text"].strip()
-        duration   = result.get("segments", [{}])[-1].get("end", 0.0)
+        # 💡 FIX: segments is a generator, loop through to stitch the string
+        text_segments = []
+        last_end_time = 0.0
+        
+        for segment in segments:
+            text_segments.append(segment.text)
+            last_end_time = segment.end  # Tracking the final timestamp for duration
+
+        transcript = "".join(text_segments).strip()
 
         return {
-            "transcript": transcript,
-            "duration_seconds": round(duration, 2)
+            "transcript":       transcript,
+            "duration_seconds": round(last_end_time, 2)
         }
 
     except Exception as e:
