@@ -12,6 +12,7 @@ import { QuestionCard } from "@/components/QuestionCard";
 import { WebcamFeed } from "@/components/WebcamFeed";
 import { AnswerInput } from "@/components/AnswerInput";
 import { ScoreCard } from "@/components/ScoreCard";
+import { PrepareLoader } from "@/components/PrepareLoader";
 import { Loader2 } from "lucide-react";
 
 export default function Interview() {
@@ -27,6 +28,7 @@ export default function Interview() {
   } = useInterview();
 
   const [loadingQuestion, setLoadingQuestion] = useState(true);
+  const [loadedCount, setLoadedCount] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentResult, setCurrentResult] = useState(null);
   const hasLoadedRef = useRef(false);
@@ -71,6 +73,7 @@ export default function Interview() {
             session.sessionId
           );
           allQuestions.push(q[0]);
+          setLoadedCount(i + 1);
         }
         setQuestions(allQuestions);
       } catch (e) {
@@ -150,17 +153,11 @@ export default function Interview() {
   if (loadingQuestion) {
     return (
       <ProtectedRoute>
-        <div className="min-h-screen flex flex-col bg-background">
-          <Navbar />
-          <div className="flex-1 flex items-center justify-center">
-            <div className="flex flex-col items-center gap-4">
-              <Loader2 className="w-12 h-12 animate-spin text-blue-500" />
-              <p className="text-slate-400">
-                Preparing your {session.totalQuestions} questions...
-              </p>
-            </div>
-          </div>
-        </div>
+        <PrepareLoader
+          totalQuestions={session.totalQuestions}
+          domain={session.domain}
+          difficulty={session.difficulty}
+        />
       </ProtectedRoute>
     );
   }
