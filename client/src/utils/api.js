@@ -106,12 +106,18 @@ export const questionsApi = {
 // Speech API
 export const speechApi = {
   transcribe: async (audioBlob) => {
-    const formData = new FormData();
-    formData.append('audio', audioBlob);
-    const response = await api.post('/speech/transcribe', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
-    return response.data;
+    try {
+      const formData = new FormData();
+      formData.append('audio', audioBlob);
+      const response = await api.post('/speech/transcribe', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      return response.data;
+    } catch (err) {
+      // Never throw — return empty transcript so UI shows friendly error
+      console.warn("Speech transcription failed:", err.message);
+      return { transcript: "", duration_seconds: 0 };
+    }
   },
 };
 

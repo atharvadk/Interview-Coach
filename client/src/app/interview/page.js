@@ -29,15 +29,22 @@ export default function Interview() {
   const [loadingQuestion, setLoadingQuestion] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentResult, setCurrentResult] = useState(null);
-  const hasLoadedRef = useRef(false); // prevent double load in strict mode
+  const hasLoadedRef = useRef(false);
 
-  const { isRecording, transcript, startRecording, stopRecording } = useAudioRecorder();
+  const {
+    isRecording,
+    transcript,
+    transcribeError,
+    clearError,
+    startRecording,
+    stopRecording
+  } = useAudioRecorder();
+
   const { currentEmotion, emotionTimeline, resetEmotionTimeline } = useWebcamEmotion(
     isRecording,
     webcamRef
   );
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
       stopRecording();
@@ -45,7 +52,6 @@ export default function Interview() {
     };
   }, [stopRecording, resetEmotionTimeline]);
 
-  // Load all questions once on mount
   useEffect(() => {
     if (!session.sessionId) {
       router.push("/setup");
@@ -64,7 +70,6 @@ export default function Interview() {
             session.difficulty,
             session.sessionId
           );
-          // q is [questionObj] — push just the object
           allQuestions.push(q[0]);
         }
         setQuestions(allQuestions);
@@ -76,15 +81,15 @@ export default function Interview() {
     };
 
     load();
-  }, [session.sessionId]); // only run when sessionId is available
+  }, [session.sessionId]);
 
   const handleStopAndSubmit = useCallback(async () => {
     setIsSubmitting(true);
     try {
       const finalTranscript = await stopRecording();
 
+      // If transcription failed or empty — don't submit, show error via hook state
       if (!finalTranscript || finalTranscript.trim() === "") {
-        alert("No speech detected. Please try again.");
         setIsSubmitting(false);
         return;
       }
@@ -106,7 +111,6 @@ export default function Interview() {
       setCurrentResult(evaluation);
     } catch (e) {
       console.error("Submit error:", e);
-      alert("Failed to evaluate answer. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -119,11 +123,15 @@ export default function Interview() {
     session
   ]);
 
+  // Retry — just clear the error, user can press mic again
+  const handleRetry = useCallback(() => {
+    clearError();
+  }, [clearError]);
+
   const handleNext = useCallback(() => {
     setCurrentResult(null);
     resetEmotionTimeline();
 
-    // Use questions.length as the source of truth
     if (currentQuestionIndex >= questions.length - 1) {
       router.push(`/report?sessionId=${session.sessionId}`);
       return;
@@ -139,7 +147,6 @@ export default function Interview() {
     session.sessionId
   ]);
 
-  // Show loader while questions are being fetched
   if (loadingQuestion) {
     return (
       <ProtectedRoute>
@@ -163,47 +170,55 @@ export default function Interview() {
       <div className="min-h-screen flex flex-col bg-background relative overflow-hidden">
         <Navbar />
 
-        <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-8 flex flex-col pt-8">
+        <main
+          className="flex-1 max-w-7xl w-full mx-auto px-4 py-6 flex flex-col"
+          style={{ height: "calc(100vh - 64px)" }}
+        >
           {/* Progress Bar */}
-          <div className="w-full bg-slate-800 rounded-full h-1.5 mb-6">
+          <div className="w-full bg-slate-800 rounded-full h-1.5 mb-4 flex-shrink-0">
             <div
               className="bg-blue-500 h-full rounded-full transition-all duration-500"
               style={{
-                width: `${((currentQuestionIndex) / session.totalQuestions) * 100}%`
+                width: `${(currentQuestionIndex / session.totalQuestions) * 100}%`
               }}
-            ></div>
+            />
           </div>
 
-          <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-0">
-            {/* Left Column */}
-            <div className="flex flex-col gap-6 min-h-0">
-              <div className="h-64 lg:h-auto lg:flex-1 min-h-0">
-                <QuestionCard
-                  question={questions[currentQuestionIndex]}
-                  current={currentQuestionIndex + 1}
-                  total={questions.length}
-                  domain={session.domain}
-                  difficulty={session.difficulty}
-                />
-              </div>
+          {/* Main Grid */}
+          <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-6 overflow-hidden">
+
+            {/* Left — Question Card */}
+            <div className="h-full overflow-hidden">
+              <QuestionCard
+                question={questions[currentQuestionIndex]}
+                current={currentQuestionIndex + 1}
+                total={questions.length}
+                domain={session.domain}
+                difficulty={session.difficulty}
+              />
             </div>
 
-            {/* Right Column */}
-            <div className="flex flex-col gap-6 min-h-0">
-              <div className="flex-none">
-                <WebcamFeed currentEmotion={currentEmotion} webcamRef={webcamRef} />
+            {/* Right — Webcam + Answer */}
+            <div className="flex flex-col gap-4 h-full overflow-hidden">
+              <div className="flex-shrink-0">
+                <WebcamFeed
+                  currentEmotion={currentEmotion}
+                  webcamRef={webcamRef}
+                />
               </div>
-
-              <div className="flex-1 min-h-0">
+              <div className="flex-1 overflow-hidden">
                 <AnswerInput
                   isRecording={isRecording}
                   transcript={transcript}
+                  transcribeError={transcribeError}
                   onStartRecord={startRecording}
                   onStopAndSubmit={handleStopAndSubmit}
+                  onRetry={handleRetry}
                   isSubmitting={isSubmitting}
                 />
               </div>
             </div>
+
           </div>
         </main>
 

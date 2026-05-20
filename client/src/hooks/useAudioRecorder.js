@@ -6,17 +6,16 @@ import { speechApi } from '@/utils/api';
 export function useAudioRecorder() {
   const [isRecording, setIsRecording] = useState(false);
   const [transcript, setTranscript] = useState("");
+  const [transcribeError, setTranscribeError] = useState(null);
   const mediaRecorderRef = useRef(null);
   const chunksRef = useRef([]);
   const streamRef = useRef(null);
   const isMountedRef = useRef(true);
 
-  // Cleanup on unmount
   useEffect(() => {
     isMountedRef.current = true;
     return () => {
       isMountedRef.current = false;
-      // Clean up media resources
       if (streamRef.current) {
         streamRef.current.getTracks().forEach(t => t.stop());
         streamRef.current = null;
@@ -31,12 +30,12 @@ export function useAudioRecorder() {
 
   const startRecording = useCallback(async () => {
     try {
-      // Clean up any existing stream first
+      setTranscribeError(null);
+
       if (streamRef.current) {
         streamRef.current.getTracks().forEach(t => t.stop());
       }
-      
-      // Request mic permission and get stream
+
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
       chunksRef.current = [];
@@ -45,14 +44,13 @@ export function useAudioRecorder() {
       const mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
       mediaRecorderRef.current = mediaRecorder;
 
-      // Collect audio chunks
       mediaRecorder.ondataavailable = (e) => {
         if (e.data.size > 0) {
           chunksRef.current.push(e.data);
         }
       };
 
-      mediaRecorder.start(1000); // collect chunk every 1 second
+      mediaRecorder.start(1000);
       setIsRecording(true);
 
     } catch (err) {
@@ -70,22 +68,41 @@ export function useAudioRecorder() {
 
       mediaRecorderRef.current.onstop = async () => {
         try {
-          // Combine all chunks into one blob
           const audioBlob = new Blob(chunksRef.current, { type: 'audio/webm' });
-          
-          // Send to backend for transcription
+
+          // Check if any audio was actually captured
+          if (audioBlob.size < 1000) {
+            console.warn("Audio blob too small — likely silence");
+            if (isMountedRef.current) {
+              setTranscribeError("no_audio");
+              setTranscript("");
+            }
+            resolve("");
+            return;
+          }
+
           const result = await speechApi.transcribe(audioBlob);
           const text = result.transcript || "";
-          
+
           if (isMountedRef.current) {
+            if (!text || text.trim() === "") {
+              setTranscribeError("no_speech");
+            } else {
+              setTranscribeError(null);
+            }
             setTranscript(text);
           }
           resolve(text);
+
         } catch (err) {
           console.error("Transcription error:", err);
+          // Don't crash — just return empty and set error state
+          if (isMountedRef.current) {
+            setTranscribeError("server_error");
+            setTranscript("");
+          }
           resolve("");
         } finally {
-          // Stop all tracks
           if (streamRef.current) {
             streamRef.current.getTracks().forEach(t => t.stop());
             streamRef.current = null;
@@ -100,9 +117,15 @@ export function useAudioRecorder() {
     });
   }, []);
 
+  const clearError = useCallback(() => {
+    setTranscribeError(null);
+  }, []);
+
   return {
     isRecording,
     transcript,
+    transcribeError,
+    clearError,
     startRecording,
     stopRecording,
   };
