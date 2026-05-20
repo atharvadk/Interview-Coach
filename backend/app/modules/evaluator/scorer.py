@@ -29,15 +29,30 @@ def keyword_score(user_answer: str, keywords: list) -> tuple:
     """
     Checks how many keywords are present in user answer.
     Returns score 0-10 and list of missing keywords.
+    Only requires 40% of keywords (to simulate real-world scenarios).
     """
     if not keywords:
-        return 5.0, []
+        return 7.0, []
 
     user_lower    = user_answer.lower()
     matched       = [kw for kw in keywords if kw.lower() in user_lower]
     missing       = [kw for kw in keywords if kw.lower() not in user_lower]
 
-    score = (len(matched) / len(keywords)) * 10
+    # Calculate match percentage - answers only need ~40-50% of keywords
+    match_percentage = (len(matched) / len(keywords))
+
+    # Score mapping: more forgiving for real-world scenarios
+    if match_percentage >= 0.75:
+        score = 10.0
+    elif match_percentage >= 0.60:
+        score = 8.5
+    elif match_percentage >= 0.45:
+        score = 7.0
+    elif match_percentage >= 0.30:
+        score = 5.5
+    else:
+        score = (match_percentage * 10) * 0.7  # Scales from 0-7 for very low match
+
     return round(score, 2), missing
 
 
@@ -98,11 +113,12 @@ def detect_misconceptions(user_answer: str, misconceptions: list) -> list:
 def composite_score(sem_score: float, kw_score: float, gram_score: float) -> float:
     """
     Weighted average of all 3 scores.
-    Semantic similarity carries the most weight.
+    Semantic similarity (understanding) carries the most weight.
+    Keywords are supplementary, not mandatory.
     """
     weights = {
-        "semantic": 0.50,
-        "keyword":  0.35,
+        "semantic": 0.60,
+        "keyword":  0.25,
         "grammar":  0.15
     }
 
