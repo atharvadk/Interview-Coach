@@ -1,0 +1,66 @@
+INFO:     Will watch for changes in these directories: ['/media/windows_drive/Interview-Coach/backend']
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/media/windows_drive/Interview-Coach/backend/venv/lib/python3.14/site-packages/uvicorn/__main__.py", line 4, in <module>
+    uvicorn.main()
+    ~~~~~~~~~~~~^^
+  File "/media/windows_drive/Interview-Coach/backend/venv/lib/python3.14/site-packages/click/core.py", line 1524, in __call__
+    return self.main(*args, **kwargs)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/media/windows_drive/Interview-Coach/backend/venv/lib/python3.14/site-packages/click/core.py", line 1445, in main
+    rv = self.invoke(ctx)
+  File "/media/windows_drive/Interview-Coach/backend/venv/lib/python3.14/site-packages/click/core.py", line 1308, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/media/windows_drive/Interview-Coach/backend/venv/lib/python3.14/site-packages/click/core.py", line 877, in invoke
+    return callback(*args, **kwargs)
+  File "/media/windows_drive/Interview-Coach/backend/venv/lib/python3.14/site-packages/uvicorn/main.py", line 441, in main
+    run(
+    ~~~^
+        app,
+        ^^^^
+    ...<48 lines>...
+        reset_contextvars=reset_contextvars,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/media/windows_drive/Interview-Coach/backend/venv/lib/python3.14/site-packages/uvicorn/main.py", line 609, in run
+    config.load_app()
+    ~~~~~~~~~~~~~~~^^
+  File "/media/windows_drive/Interview-Coach/backend/venv/lib/python3.14/site-packages/uvicorn/config.py", line 415, in load_app
+    return import_from_string(self.app)
+  File "/media/windows_drive/Interview-Coach/backend/venv/lib/python3.14/site-packages/uvicorn/importer.py", line 22, in import_from_string
+    raise exc from None
+  File "/media/windows_drive/Interview-Coach/backend/venv/lib/python3.14/site-packages/uvicorn/importer.py", line 19, in import_from_string
+    module = importlib.import_module(module_str)
+  File "/usr/lib/python3.14/importlib/__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1406, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1371, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1342, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 938, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 759, in exec_module
+  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed
+  File "/media/windows_drive/Interview-Coach/backend/app/main.py", line 4, in <module>
+    from app.routes import questions, evaluate, speech, face, resume
+  File "/media/windows_drive/Interview-Coach/backend/app/routes/speech.py", line 2, in <module>
+    from app.modules.speech.transcriber import transcribe
+  File "/media/windows_drive/Interview-Coach/backend/app/modules/speech/transcriber.py", line 2, in <module>
+    from pydub import AudioSegment
+  File "/media/windows_drive/Interview-Coach/backend/venv/lib/python3.14/site-packages/pydub/__init__.py", line 1, in <module>
+    from .audio_segment import AudioSegment
+  File "/media/windows_drive/Interview-Coach/backend/venv/lib/python3.14/site-packages/pydub/audio_segment.py", line 11, in <module>
+    from .utils import mediainfo_json, fsdecode
+  File "/media/windows_drive/Interview-Coach/backend/venv/lib/python3.14/site-packages/pydub/utils.py", line 16, in <module>
+    import pyaudioop as audioop
+ModuleNotFoundError: No module named 'pyaudioop'
+🔧 Using device: cpu
+✅ Models loader initialized (all models will load on first use)
+✅ Loaded ai.json
+✅ Loaded ml.json
+✅ Loaded os.json
+✅ Loaded java.json
+✅ Loaded dsa.json
+✅ Loaded fs.json
